@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../shared/shared.css">
+  <style>
+    body { padding: 0; }
+    .pane-body { padding: 12px; }
+    .mode-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      padding: 0;
+      margin: 0 0 12px 0;
+    }
+    .mode-tab {
+      flex: 1;
+      padding: 8px 4px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .mode-tab:hover { color: #333; }
+    .mode-tab.active {
+      color: #0078d4;
+      border-bottom-color: #0078d4;
+      font-weight: 600;
+    }
+    .mode-content { display: none; }
+    .mode-content.active { display: block; }
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 24px 16px;
+      text-align: center;
+      color: #888;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: #0078d4;
+      background: #f0f7ff;
+      color: #0078d4;
+    }
+    .upload-area input[type="file"] { display: none; }
+    .upload-area .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-progress {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+    .current-path {
+      font-size: 12px;
+      color: #555;
+      background: #f5f5f5;
+      padding: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+    .att-upload-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px 0;
+    }
+    .att-upload-list li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 0;
+      font-size: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .att-upload-list li:last-child { border-bottom: none; }
+    .att-upload-list .att-status { margin-left: auto; }
+  </style>
+</head>
+<body>
+  <div class="pane-header">
+    <h3>Seafile</h3>
+    <button class="settings-btn" id="openSettings" title="Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div id="notConfigured" class="empty-msg" style="display:none">
+    <p data-i18n="notConfigured">No Seafile account configured.</p>
+    <button class="primary" id="setupBtn" data-i18n="openSettings" style="margin-top:8px;">Open Settings</button>
+  </div>
+
+  <div id="mainContent" style="display:none;">
+    <!-- Account selector (shown if multiple accounts) -->
+    <div id="accountSelector" class="form-group" style="display:none;padding:8px 12px 0;">
+      <select id="accountSelect"></select>
+    </div>
+
+    <!-- Mode tabs -->
+    <div class="mode-tabs">
+      <div class="mode-tab active" data-mode="upload" data-i18n="composeUploadLabel">Upload Attachments</div>
+      <div class="mode-tab" data-mode="insert" data-i18n="composeInsertLabel">Insert Link</div>
+    </div>
+
+    <!-- Mode: Upload Attachments -->
+    <div class="mode-content active pane-body" id="mode-upload">
+      <p style="font-size:12px;color:#666;margin:0 0 12px 0;" data-i18n="uploadDesc">Upload email attachments or local files to Seafile and insert download links.</p>
+
+      <!-- Existing email attachments -->
+      <div id="emailAttachments" style="display:none;">
+        <label data-i18n="emailAttachments" style="margin-bottom:6px;">Email Attachments</label>
+        <ul class="att-upload-list" id="attachmentList"></ul>
+        <button id="uploadAttBtn" class="primary" data-i18n="uploadAndReplace" style="margin-bottom:16px;">Upload & replace with links</button>
+      </div>
+
+      <!-- Direct file upload via file picker -->
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">&#128194;</div>
+        <div data-i18n="dropOrClick">Click to select files or drag & drop</div>
+        <input type="file" id="fileInput" multiple>
+      </div>
+
+      <div id="uploadProgress" class="upload-progress" style="display:none;"></div>
+      <div id="uploadStatus" class="status"></div>
+    </div>
+
+    <!-- Mode: Insert Seafile Link -->
+    <div class="mode-content pane-body" id="mode-insert">
+      <div class="form-group">
+        <label for="repoSelect" data-i18n="targetLibrary">Library</label>
+        <select id="repoSelect"></select>
+      </div>
+      <label data-i18n="targetFolder">Target folder</label>
+      <div class="current-path" id="currentPath">/</div>
+      <div class="file-browser">
+        <input type="text" id="fileFilter" style="display:none" data-i18n-placeholder="filterFiles" placeholder="Filter files by name...">
+        <ul class="file-list" id="fileList" data-empty="Empty folder" data-i18n-empty="emptyFolder"></ul>
+      </div>
+
+      <!-- Detail view (after file selection) -->
+      <div id="detailView" class="detail-view">
+        <div class="back-link" id="backBtn">&larr; <span data-i18n="backToFiles">Back</span></div>
+        <div class="selected-file" id="selectedFile">
+          <span class="file-icon" id="selectedFileIcon"></span>
+          <span class="file-name" id="selectedFileName"></span>
+          <span class="file-size" id="selectedFileSize"></span>
+        </div>
+
+        <div class="existing-link-bar" id="existingLinkBar">
+          <span data-i18n="existingLinkFound">A share link already exists for this file.</span>
+          <div class="btn-row">
+            <button id="useExistingBtn" data-i18n="useExisting">Use existing</button>
+            <button id="createNewBtn" data-i18n="createNew">Create new</button>
+          </div>
+        </div>
+
+        <div id="linkOptions">
+          <div class="form-group">
+            <label for="linkPassword" data-i18n="sharePassword">Password Protection</label>
+            <div class="input-with-btn">
+              <input type="text" id="linkPassword" placeholder="">
+              <button type="button" class="gen-btn" id="generatePasswordBtn" title="Generate password">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="11" width="20" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="17" r="1"/></svg>
+              </button>
+            </div>
+            <span class="hint" data-i18n="sharePasswordHint">Leave empty for no password</span>
+            <label id="showPasswordLabel" style="display:none;margin-top:6px;font-weight:normal;font-size:12px;cursor:pointer;align-items:center;gap:6px;">
+              <input type="checkbox" id="showPasswordInEmail">
+              <span data-i18n="showPasswordInEmail">Show password in email</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="linkExpireDays" data-i18n="shareExpireDays">Expiration (days)</label>
+            <input type="number" id="linkExpireDays" min="0" placeholder="0">
+            <span class="hint" data-i18n="shareExpireDaysHint">0 = no expiration</span>
+          </div>
+          <button id="insertBtn" class="primary" data-i18n="insertLink">Insert link into email</button>
+        </div>
+      </div>
+
+      <div id="insertStatus" class="status"></div>
+    </div>
+  </div>
+
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="../api/seafile.js"></script>
+  <script src="../shared/file-icons.js"></script>
+  <script src="../shared/password.js"></script>
+  <script src="../shared/utils.js"></script>
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="compose.js"></script>
+</body>
+</html>

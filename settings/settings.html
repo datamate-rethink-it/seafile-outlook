@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../shared/shared.css">
+  <style>
+    .account-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+    }
+    .account-bar select {
+      flex: 1;
+      font-size: 12px;
+      padding: 3px 24px 3px 6px;
+    }
+    .account-bar .add-btn,
+    .account-bar .remove-btn {
+      background: none;
+      border: none;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #666;
+      line-height: 1;
+    }
+    .account-bar .add-btn:hover { color: #0078d4; }
+    .account-bar .remove-btn:hover { color: #dc3545; }
+  </style>
+</head>
+<body>
+
+  <!-- Account Selector Bar -->
+  <div class="account-bar">
+    <select id="accountSelect"></select>
+    <button class="add-btn" id="addAccountBtn" title="Add account">+</button>
+    <button class="remove-btn" id="removeAccountBtn" title="Remove account" style="display:none">&times;</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="connection" data-i18n="tabConnection">Connection</div>
+    <div class="tab disabled" data-tab="filelink" data-i18n="tabFileLink">Upload</div>
+    <div class="tab disabled" data-tab="sharing" data-i18n="tabSharing">Share Links</div>
+    <div class="tab disabled" data-tab="saving" data-i18n="tabSaving">Save Attachments</div>
+  </div>
+
+  <!-- Tab: Connection -->
+  <div class="tab-content active" id="tab-connection">
+    <!-- Connected state -->
+    <div id="connectedInfo" style="display:none;">
+      <div class="form-group">
+        <label data-i18n="serverUrl">Server URL</label>
+        <div id="connectedServer" style="font-size:13px;color:#333;padding:4px 0;"></div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="connectedAs">Connected as</label>
+        <div id="connectedUser" style="font-size:13px;color:#333;padding:4px 0;"></div>
+      </div>
+      <div id="connectedMethod" style="font-size:11px;color:#888;margin-bottom:12px;"></div>
+      <button id="disconnectBtn" class="danger" data-i18n="disconnect">Disconnect</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label for="serverUrl" data-i18n="serverUrl">Server URL</label>
+        <input type="url" id="serverUrl" placeholder="https://cloud.seafile.com">
+      </div>
+      <div class="form-group">
+        <label for="username" data-i18n="username">Username / Email</label>
+        <input type="text" id="username" placeholder="user@example.com">
+      </div>
+      <div class="form-group">
+        <label for="password" data-i18n="password">Password</label>
+        <input type="password" id="password">
+      </div>
+      <div class="form-group">
+        <label for="otp" data-i18n="otpLabel">2FA Code</label>
+        <input type="text" id="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="123456">
+        <span class="hint" data-i18n="otpHint">Only required if two-factor authentication is enabled.</span>
+      </div>
+      <button id="connectBtn" class="primary" data-i18n="connect">Connect</button>
+      <div id="connectStatus" class="status"></div>
+
+      <div class="divider"><span data-i18n="or">or</span></div>
+
+      <button id="ssoBtn" class="primary" data-i18n="ssoLogin">Login via SSO</button>
+      <div id="ssoStatus" class="status"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Upload (FileLink) -->
+  <div class="tab-content" id="tab-filelink">
+    <p class="defaults-hint" data-i18n="fileLinkHint">Configure where attachments are uploaded when replaced by download links.</p>
+    <div class="form-group">
+      <label for="repoSelect" data-i18n="targetLibrary">Target Library</label>
+      <select id="repoSelect">
+        <option value="" data-i18n="selectLibrary">-- Select a library --</option>
+      </select>
+      <span class="hint" data-i18n="encryptedHint">Encrypted libraries are not supported.</span>
+    </div>
+    <div class="form-group">
+      <label data-i18n="uploadFolder">Upload Folder</label>
+      <div class="folder-picker" id="uploadFolderPicker">
+        <div class="current-path" id="uploadPath"><span class="path-text">/</span><span class="toggle-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="#999"/></svg></span></div>
+        <ul class="folder-list" id="uploadFolderList" data-empty="No subfolders" data-i18n-empty="noSubfolders"></ul>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="fileLinkPasswordMode" data-i18n="sharePassword">Password Protection</label>
+      <select id="fileLinkPasswordMode">
+        <option value="none" data-i18n="passwordNone">No password</option>
+        <option value="random" data-i18n="passwordRandom">Random password</option>
+        <option value="custom" data-i18n="passwordCustom">Custom password</option>
+      </select>
+    </div>
+    <div class="form-group" id="fileLinkPasswordLengthGroup" style="display:none">
+      <label for="fileLinkPasswordLength" data-i18n="passwordLength">Password length</label>
+      <input type="number" id="fileLinkPasswordLength" min="8" max="64" value="12">
+    </div>
+    <div class="form-group" id="fileLinkCustomPasswordGroup" style="display:none">
+      <label for="fileLinkCustomPassword" data-i18n="customPassword">Password</label>
+      <input type="text" id="fileLinkCustomPassword" placeholder="">
+    </div>
+    <div class="form-group">
+      <label for="fileLinkExpireDays" data-i18n="shareExpireDays">Expiration (days)</label>
+      <input type="number" id="fileLinkExpireDays" min="0" placeholder="0">
+      <span class="hint" data-i18n="shareExpireDaysHint">0 = no expiration</span>
+    </div>
+  </div>
+
+  <!-- Tab: Share Links -->
+  <div class="tab-content" id="tab-sharing">
+    <p class="defaults-hint" data-i18n="sharingDefaultsHint">Define default values for share links. You can adjust these for each link.</p>
+    <div class="form-group">
+      <label for="sharePasswordMode" data-i18n="sharePassword">Password Protection</label>
+      <select id="sharePasswordMode">
+        <option value="none" data-i18n="passwordNone">No password</option>
+        <option value="random" data-i18n="passwordRandom">Random password</option>
+        <option value="custom" data-i18n="passwordCustom">Custom password</option>
+      </select>
+    </div>
+    <div class="form-group" id="sharePasswordLengthGroup" style="display:none">
+      <label for="sharePasswordLength" data-i18n="passwordLength">Password length</label>
+      <input type="number" id="sharePasswordLength" min="8" max="64" value="12">
+    </div>
+    <div class="form-group" id="shareCustomPasswordGroup" style="display:none">
+      <label for="shareCustomPassword" data-i18n="customPassword">Password</label>
+      <input type="text" id="shareCustomPassword" placeholder="">
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;">
+        <input type="checkbox" id="showPasswordInEmail" checked>
+        <span data-i18n="showPasswordInEmail">Show password in email</span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label for="shareExpireDays" data-i18n="shareExpireDays">Expiration (days)</label>
+      <input type="number" id="shareExpireDays" min="0" placeholder="0">
+      <span class="hint" data-i18n="shareExpireDaysHint">0 = no expiration</span>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;">
+        <input type="checkbox" id="skipLinkOptions">
+        <span data-i18n="skipLinkOptions">Always use these defaults when inserting Seafile links (skip options dialog)</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Tab: Save Attachments -->
+  <div class="tab-content" id="tab-saving">
+    <p class="defaults-hint" data-i18n="savingDefaultsHint">Define default values for saving attachments. You can adjust these for each email.</p>
+    <div class="form-group">
+      <label for="saveRepoSelect" data-i18n="saveTargetLibrary">Target Library</label>
+      <select id="saveRepoSelect">
+        <option value="" data-i18n="sameAsUpload">-- Same as upload library --</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label data-i18n="saveFolder">Target Folder</label>
+      <div class="folder-picker" id="saveFolderPicker">
+        <div class="current-path" id="savePath"><span class="path-text">/</span><span class="toggle-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="#999"/></svg></span></div>
+        <ul class="folder-list" id="saveFolderList" data-empty="No subfolders" data-i18n-empty="noSubfolders"></ul>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:16px;">
+      <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;">
+        <input type="checkbox" id="saveReplaceExisting">
+        <span data-i18n="saveReplaceExisting">Replace existing files with the same name</span>
+      </label>
+    </div>
+  </div>
+
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="../api/seafile.js"></script>
+  <script src="../shared/file-icons.js"></script>
+  <script src="../shared/password.js"></script>
+  <script src="../shared/utils.js"></script>
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
