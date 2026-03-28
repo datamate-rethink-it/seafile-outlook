@@ -64,26 +64,46 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 
 - **Outlook 2019** or later, **Microsoft 365**, or **Outlook on the web**
 - **Seafile Server** 10.0 or later (Community Edition or Professional Edition)
-- An **HTTPS web server** to host the add-in files (can be the same server as Seafile)
 
 ## Installation
 
-### For organizations (recommended)
+### Using the hosted version (recommended)
 
-1. Host the add-in files on an HTTPS web server
-2. Update the URLs in `manifest.xml` to point to your server
-3. Upload the manifest via the **Microsoft 365 Admin Center** → **Integrated Apps**
-4. Assign the add-in to users or groups
+The add-in is hosted centrally by [datamate](https://datamate.org) at `https://outlook.de.seafile.com`. No self-hosting required.
+
+1. **Configure CORS** on your Seafile server (see [CORS configuration](#cors-configuration) below)
+2. **Download the manifest** from `https://outlook.de.seafile.com/manifest.xml`
+3. **Deploy the manifest** to your users:
+   - **Organization-wide**: Upload via **Microsoft 365 Admin Center** → **Integrated Apps** and assign to users/groups
+   - **Individual**: Go to `https://aka.ms/olksideload`, click **Add a custom add-in** → **Add from File**, and upload `manifest.xml`
 
 The add-in will appear automatically in users' Outlook ribbon.
+
+### Self-hosting
+
+You can also host the add-in files on your own HTTPS web server (e.g. the same server as Seafile):
+
+1. Clone this repository and copy the files to your web server
+2. Update all URLs in `manifest.xml` to point to your server
+3. If hosted on the same domain as Seafile, no CORS configuration is needed
+4. Deploy the manifest as described above
+
+> **Note:** The add-in consists entirely of static files (HTML, CSS, JavaScript). There is no server-side code, no database, and no secrets in the source. The code is open source and always visible to anyone who can access the hosting URL — this is by design, as with any web application.
 
 ### For development (sideloading)
 
 1. Clone this repository
-2. Serve the files locally over HTTPS (e.g. with `npx office-addin-dev-certs install` and a simple HTTPS server)
-3. Sideload the manifest:
+2. Generate dev certificates and start the local server:
+   ```bash
+   ./dev/gen-certs.sh
+   node dev/server.js
+   ```
+3. Open `https://localhost:3000` in your browser and accept the self-signed certificate
+4. Sideload the manifest:
    - **Outlook Web**: Go to `https://aka.ms/olksideload` and upload `manifest.xml`
    - **Outlook Desktop**: Settings → Manage Add-ins → Upload custom add-in
+
+The dev server includes a CORS proxy so you can test against any Seafile server without configuring CORS headers.
 
 ## Configuration
 
@@ -111,15 +131,23 @@ This works with any SSO method configured on the server (SAML, OAuth, Keycloak, 
 
 ### CORS configuration
 
-If the add-in is hosted on a different domain than the Seafile server, CORS headers must be configured. Add the following to your Seafile nginx configuration:
+When using the hosted version (or any setup where the add-in and Seafile are on different domains), the Seafile server must allow cross-origin requests from the add-in domain.
+
+Add the following to your Seafile **nginx configuration** (typically in the `location /` or `location /api` block):
 
 ```nginx
-add_header Access-Control-Allow-Origin "https://your-addin-domain.com" always;
+# CORS for Seafile Outlook Add-in
+add_header Access-Control-Allow-Origin "https://outlook.de.seafile.com" always;
 add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
 add_header Access-Control-Allow-Headers "Authorization, Content-Type, X-SEAFILE-OTP" always;
+
+# Handle preflight requests
+if ($request_method = OPTIONS) {
+    return 204;
+}
 ```
 
-If both are on the same domain, no CORS configuration is needed.
+If you self-host the add-in on the same domain as Seafile, no CORS configuration is needed.
 
 ## Usage
 
