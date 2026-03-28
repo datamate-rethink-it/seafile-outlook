@@ -280,13 +280,13 @@ ssoBtn.addEventListener("click", async () => {
       }
       try {
         const status = await seafile.checkSSOStatus(serverUrl, match[1]);
-        if (status.status === "success" && (status.apiToken || status.api_key)) {
+        if (status.status === "success" && (status.api_token || status.apiToken || status.api_key)) {
           clearInterval(ssoPollingInterval);
           ssoPollingInterval = null;
           await onConnected({
             serverUrl,
             username: status.username,
-            apiToken: status.apiToken || status.api_key,
+            apiToken: status.api_token || status.apiToken || status.api_key,
             authMethod: "sso",
           });
           ssoStatus.className = "status";

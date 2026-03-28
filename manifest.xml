@@ -6,7 +6,6 @@
   xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
   xsi:type="MailApp">
 
-  <!-- IMPORTANT: Replace this GUID with your own before deployment -->
   <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
   <Version>0.1.0</Version>
   <ProviderName>datamate</ProviderName>
@@ -14,13 +13,9 @@
   <DisplayName DefaultValue="Seafile for Outlook"/>
   <Description DefaultValue="Share email attachments via Seafile download links, insert links to existing Seafile files, and save received attachments to Seafile."/>
 
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.svg"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.svg"/>
   <SupportUrl DefaultValue="https://www.seafile.com"/>
-
-  <AppDomains>
-    <!-- Add your Seafile server domain(s) here for CORS -->
-  </AppDomains>
 
   <Hosts>
     <Host Name="Mailbox"/>
@@ -28,7 +23,6 @@
 
   <Requirements>
     <Sets>
-      <!-- Requirement set 1.8 needed for getAttachmentContentAsync -->
       <Set Name="Mailbox" MinVersion="1.8"/>
     </Sets>
   </Requirements>
@@ -37,26 +31,19 @@
     <Form xsi:type="ItemRead">
       <DesktopSettings>
         <SourceLocation DefaultValue="https://localhost:3000/read/read.html"/>
-        <RequestedHeight>450</RequestedHeight>
-      </DesktopSettings>
-    </Form>
-    <Form xsi:type="ItemEdit">
-      <DesktopSettings>
-        <SourceLocation DefaultValue="https://localhost:3000/compose/compose.html"/>
-        <RequestedHeight>450</RequestedHeight>
+        <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
 
   <Permissions>ReadWriteMailbox</Permissions>
+
   <Rule xsi:type="RuleCollection" Mode="Or">
-    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
-  <DisableEntityHighlighting/>
+  <DisableEntityHighlighting>true</DisableEntityHighlighting>
 
-  <!-- Version Overrides for modern ribbon commands -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Requirements>
       <bt:Sets DefaultMinVersion="1.8">
@@ -68,13 +55,11 @@
       <Host xsi:type="MailHost">
         <DesktopFormFactor>
 
-          <!-- === Compose Mode Commands === -->
           <ExtensionPoint xsi:type="MessageComposeCommandSurface">
             <OfficeTab id="TabDefault">
               <Group id="composeGroup">
                 <Label resid="groupLabel"/>
 
-                <!-- Button: Upload Attachments to Seafile -->
                 <Control xsi:type="Button" id="composeUploadBtn">
                   <Label resid="composeUploadLabel"/>
                   <Supertip>
@@ -91,7 +76,6 @@
                   </Action>
                 </Control>
 
-                <!-- Button: Insert Seafile Link -->
                 <Control xsi:type="Button" id="composeInsertBtn">
                   <Label resid="composeInsertLabel"/>
                   <Supertip>
@@ -108,7 +92,6 @@
                   </Action>
                 </Control>
 
-                <!-- Button: Settings -->
                 <Control xsi:type="Button" id="settingsBtn">
                   <Label resid="settingsLabel"/>
                   <Supertip>
@@ -128,13 +111,11 @@
             </OfficeTab>
           </ExtensionPoint>
 
-          <!-- === Read Mode Commands === -->
           <ExtensionPoint xsi:type="MessageReadCommandSurface">
             <OfficeTab id="TabDefault">
               <Group id="readGroup">
                 <Label resid="groupLabel"/>
 
-                <!-- Button: Save Attachments to Seafile -->
                 <Control xsi:type="Button" id="readSaveBtn">
                   <Label resid="readSaveLabel"/>
                   <Supertip>
@@ -151,7 +132,6 @@
                   </Action>
                 </Control>
 
-                <!-- Button: Settings (also in read mode) -->
                 <Control xsi:type="Button" id="readSettingsBtn">
                   <Label resid="settingsLabel"/>
                   <Supertip>
@@ -177,9 +157,9 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="icon16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
-        <bt:Image id="icon32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-        <bt:Image id="icon80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="icon16" DefaultValue="https://localhost:3000/assets/icon-16.svg"/>
+        <bt:Image id="icon32" DefaultValue="https://localhost:3000/assets/icon-32.svg"/>
+        <bt:Image id="icon80" DefaultValue="https://localhost:3000/assets/icon-80.svg"/>
       </bt:Images>
 
       <bt:Urls>

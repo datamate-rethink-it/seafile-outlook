@@ -1,23 +1,34 @@
 /**
  * Seafile API client for Outlook Web Add-in.
  * Ported from the Seafile Thunderbird extension.
+ *
+ * In dev mode (localhost), API calls are routed through a local proxy
+ * to avoid CORS issues. In production, calls go directly to the Seafile server
+ * (which must have CORS configured, or be on the same domain).
  */
+
+/**
+ * Check if we're running on the dev server (localhost).
+ * If so, prefix API URLs with the proxy path.
+ */
+function proxyUrl(url) {
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    return `${location.origin}/seafile-proxy/${url}`;
+  }
+  return url;
+}
+
 class SeafileAPI {
 
   /**
    * Authenticate with username/password and get an API token.
-   * @param {string} server - Seafile server URL (e.g. "https://cloud.seafile.com")
-   * @param {string} username
-   * @param {string} password
-   * @param {string} [otp] - Optional 2FA/TOTP code
-   * @returns {Promise<string>} API token
    */
   async getToken(server, username, password, otp) {
     const headers = { "Content-Type": "application/x-www-form-urlencoded" };
     if (otp) {
       headers["X-SEAFILE-OTP"] = otp;
     }
-    const resp = await fetch(`${server}/api2/auth-token/`, {
+    const resp = await fetch(proxyUrl(`${server}/api2/auth-token/`), {
       method: "POST",
       headers,
       body: new URLSearchParams({ username, password }),
@@ -33,11 +44,9 @@ class SeafileAPI {
 
   /**
    * Get server info (features, version, etc.).
-   * @param {string} server
-   * @returns {Promise<Object>}
    */
   async getServerInfo(server) {
-    const resp = await fetch(`${server}/api2/server-info/`);
+    const resp = await fetch(proxyUrl(`${server}/api2/server-info/`));
     if (!resp.ok) {
       throw new Error(`Failed to get server info (${resp.status})`);
     }
@@ -46,11 +55,9 @@ class SeafileAPI {
 
   /**
    * Request a client SSO login link.
-   * @param {string} server
-   * @returns {Promise<Object>} Object with { link } property
    */
   async createSSOLink(server) {
-    const resp = await fetch(`${server}/api2/client-sso-link/`, {
+    const resp = await fetch(proxyUrl(`${server}/api2/client-sso-link/`), {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
@@ -66,12 +73,9 @@ class SeafileAPI {
 
   /**
    * Poll SSO login status.
-   * @param {string} server
-   * @param {string} ssoToken - Token from createSSOLink
-   * @returns {Promise<Object>} { status: "waiting"|"success"|"error", username?, apiToken? }
    */
   async checkSSOStatus(server, ssoToken) {
-    const resp = await fetch(`${server}/api2/client-sso-link/${ssoToken}/`);
+    const resp = await fetch(proxyUrl(`${server}/api2/client-sso-link/${ssoToken}/`));
     if (!resp.ok) {
       throw new Error(`Failed to check SSO status (${resp.status})`);
     }
@@ -80,12 +84,9 @@ class SeafileAPI {
 
   /**
    * Get account info (display name, contact email, usage, etc.).
-   * @param {string} server
-   * @param {string} token
-   * @returns {Promise<Object>} Account info with name, email, contact_email, usage, total
    */
   async getAccountInfo(server, token) {
-    const resp = await fetch(`${server}/api2/account/info/`, {
+    const resp = await fetch(proxyUrl(`${server}/api2/account/info/`), {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
@@ -96,12 +97,9 @@ class SeafileAPI {
 
   /**
    * List all accessible libraries/repos.
-   * @param {string} server
-   * @param {string} token
-   * @returns {Promise<Array>} List of repos with id, name, size, etc.
    */
   async listRepos(server, token) {
-    const resp = await fetch(`${server}/api/v2.1/repos/`, {
+    const resp = await fetch(proxyUrl(`${server}/api/v2.1/repos/`), {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
@@ -113,15 +111,10 @@ class SeafileAPI {
 
   /**
    * Get an upload link for a given repo and target directory.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} [parentDir="/"] - Target directory (upload token is bound to this path)
-   * @returns {Promise<string>} Upload URL
    */
   async getUploadLink(server, token, repoId, parentDir = "/") {
     const params = new URLSearchParams({ p: parentDir });
-    const resp = await fetch(`${server}/api2/repos/${repoId}/upload-link/?${params}`, {
+    const resp = await fetch(proxyUrl(`${server}/api2/repos/${repoId}/upload-link/?${params}`), {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
@@ -133,14 +126,6 @@ class SeafileAPI {
 
   /**
    * Upload a file to Seafile.
-   * @param {string} uploadLink - Upload URL from getUploadLink()
-   * @param {string} token
-   * @param {File|Blob} file - File data
-   * @param {string} fileName - Name of the file
-   * @param {string} parentDir - Target directory
-   * @param {AbortSignal} [signal] - Optional abort signal
-   * @param {boolean} [replace=true] - Replace existing files
-   * @returns {Promise<Object>} Upload result with name, id, size
    */
   async uploadFile(uploadLink, token, file, fileName, parentDir, signal, replace = true) {
     const formData = new FormData();
@@ -152,7 +137,7 @@ class SeafileAPI {
       ? uploadLink
       : `${uploadLink}?ret-json=1`;
 
-    const resp = await fetch(url, {
+    const resp = await fetch(proxyUrl(url), {
       method: "POST",
       headers: { Authorization: `Token ${token}` },
       body: formData,
@@ -169,15 +154,10 @@ class SeafileAPI {
 
   /**
    * Get existing share links for a file.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path - File path within the repo
-   * @returns {Promise<Array>} Array of existing share link objects
    */
   async getShareLinks(server, token, repoId, path) {
     const params = new URLSearchParams({ repo_id: repoId, path });
-    const resp = await fetch(`${server}/api/v2.1/share-links/?${params}`, {
+    const resp = await fetch(proxyUrl(`${server}/api/v2.1/share-links/?${params}`), {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
@@ -188,14 +168,6 @@ class SeafileAPI {
 
   /**
    * Create a share/download link for a file.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path - File path within the repo
-   * @param {Object} [options]
-   * @param {string} [options.password] - Optional password protection
-   * @param {number} [options.expireDays] - Optional expiry in days
-   * @returns {Promise<Object>} Share link object with link property
    */
   async createShareLink(server, token, repoId, path, options = {}) {
     const body = { repo_id: repoId, path };
@@ -206,7 +178,7 @@ class SeafileAPI {
       body.expire_days = options.expireDays;
     }
 
-    const resp = await fetch(`${server}/api/v2.1/share-links/`, {
+    const resp = await fetch(proxyUrl(`${server}/api/v2.1/share-links/`), {
       method: "POST",
       headers: {
         Authorization: `Token ${token}`,
@@ -230,12 +202,9 @@ class SeafileAPI {
 
   /**
    * Delete a share link.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} linkToken - The share link token
    */
   async deleteShareLink(server, token, linkToken) {
-    const resp = await fetch(`${server}/api/v2.1/share-links/${linkToken}/`, {
+    const resp = await fetch(proxyUrl(`${server}/api/v2.1/share-links/${linkToken}/`), {
       method: "DELETE",
       headers: { Authorization: `Token ${token}` },
     });
@@ -246,14 +215,10 @@ class SeafileAPI {
 
   /**
    * Delete a file from a repo.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path - File path within the repo
    */
   async deleteFile(server, token, repoId, path) {
     const resp = await fetch(
-      `${server}/api2/repos/${repoId}/file/?p=${encodeURIComponent(path)}`,
+      proxyUrl(`${server}/api2/repos/${repoId}/file/?p=${encodeURIComponent(path)}`),
       {
         method: "DELETE",
         headers: { Authorization: `Token ${token}` },
@@ -266,14 +231,10 @@ class SeafileAPI {
 
   /**
    * Create a directory in a repo.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path - Directory path to create
    */
   async createDir(server, token, repoId, path) {
     const resp = await fetch(
-      `${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`,
+      proxyUrl(`${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`),
       {
         method: "POST",
         headers: {
@@ -290,15 +251,10 @@ class SeafileAPI {
 
   /**
    * List directory contents.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path - Directory path
-   * @returns {Promise<Array>} Array of entries with name, type, size, etc.
    */
   async listDir(server, token, repoId, path = "/") {
     const resp = await fetch(
-      `${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`,
+      proxyUrl(`${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`),
       {
         headers: { Authorization: `Token ${token}` },
       }
@@ -311,15 +267,10 @@ class SeafileAPI {
 
   /**
    * Check if a directory exists in a repo.
-   * @param {string} server
-   * @param {string} token
-   * @param {string} repoId
-   * @param {string} path
-   * @returns {Promise<boolean>}
    */
   async dirExists(server, token, repoId, path) {
     const resp = await fetch(
-      `${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`,
+      proxyUrl(`${server}/api2/repos/${repoId}/dir/?p=${encodeURIComponent(path)}`),
       {
         headers: { Authorization: `Token ${token}` },
       }
@@ -330,7 +281,6 @@ class SeafileAPI {
 
 /**
  * Extract share link token from a Seafile share URL.
- * e.g. "https://cloud.seafile.com/f/abc123def456/" -> "abc123def456"
  */
 function extractTokenFromUrl(url) {
   if (!url) return null;

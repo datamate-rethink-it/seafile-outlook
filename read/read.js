@@ -285,28 +285,28 @@ Office.onReady(async () => {
 
     // Read attachments from current email
     const item = Office.context.mailbox.item;
-    item.getAttachmentsAsync((result) => {
-      loadingEl.style.display = "none";
+    loadingEl.style.display = "none";
 
-      if (result.status !== Office.AsyncResultStatus.Succeeded || result.value.length === 0) {
-        noAttachmentsEl.style.display = "block";
-        return;
-      }
+    // In read mode, attachments is a synchronous property
+    const rawAttachments = item.attachments || [];
+    if (rawAttachments.length === 0) {
+      noAttachmentsEl.style.display = "block";
+      return;
+    }
 
-      attachments = result.value
-        .filter(a => a.attachmentType === Office.MailboxEnums.AttachmentType.File)
-        .map(a => ({ id: a.id, name: a.name, size: a.size, customName: a.name }));
+    attachments = rawAttachments
+      .filter(a => a.attachmentType === Office.MailboxEnums.AttachmentType.File)
+      .map(a => ({ id: a.id, name: a.name, size: a.size, customName: a.name }));
 
-      if (attachments.length === 0) {
-        noAttachmentsEl.style.display = "block";
-        return;
-      }
+    if (attachments.length === 0) {
+      noAttachmentsEl.style.display = "block";
+      return;
+    }
 
-      contentEl.style.display = "block";
-      renderAttachments();
-      loadAccountData();
-      lastUsedAccount("read", currentAccountId);
-    });
+    contentEl.style.display = "block";
+    renderAttachments();
+    loadAccountData();
+    lastUsedAccount("read", currentAccountId);
   } catch (e) {
     loadingEl.style.display = "none";
     showStatus(saveStatus, `Error: ${e.message}`, "error");

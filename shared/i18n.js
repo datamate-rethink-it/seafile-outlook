@@ -25,9 +25,9 @@ const I18N = {
       }
     } catch { /* fallback to en */ }
 
-    // Normalize locale: "de-DE" -> "de", "zh-CN" -> "zh_CN"
+    // Normalize locale: "de-DE" -> "de_DE", "en-US" -> "en_US"
     locale = locale.replace("-", "_");
-    const lang = locale.split("_")[0];
+    const lang = locale.split("_")[0].toLowerCase();
 
     // Try to load locale file (exact match first, then base language, then English)
     for (const candidate of [locale, lang, "en"]) {
