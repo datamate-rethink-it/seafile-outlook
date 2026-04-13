@@ -25,7 +25,7 @@ settings/                  # Account settings page (tabbed: Connection, Upload, 
 compose/                   # Compose task pane: upload attachments + insert Seafile links
 read/                      # Read task pane: save received attachments to Seafile
 assets/                    # SVG icons (16px, 32px, 80px) for Office ribbon
-_locales/{en,de}.json      # i18n translations (flat JSON format)
+_locales/{en,de,fr,es,pt_BR,ru,zh_CN}.json  # i18n translations (flat JSON format)
 dev/server.js              # Local HTTPS dev server with CORS proxy
 dev/gen-certs.sh           # Generate self-signed certs for dev server
 ```
@@ -94,7 +94,7 @@ There is no linter, formatter, test suite, or CI pipeline.
 - Translation files in `_locales/` as flat JSON (`{ "key": "value" }`)
 - HTML uses `data-i18n`, `data-i18n-placeholder`, `data-i18n-empty`, `data-i18n-title` attributes
 - `I18N.init()` detects locale from `Office.context.displayLanguage`, falls back to `navigator.language`, then English
-- Currently: English (primary), German. Infrastructure supports easy expansion.
+- 7 languages: English (primary), German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
 - When adding user-visible strings, add keys to all locale files
 
 ## SeafileAPI Class (api/seafile.js)
