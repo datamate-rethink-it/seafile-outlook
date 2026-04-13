@@ -202,7 +202,7 @@ When reading an email, click **Save to Seafile** in the ribbon. Select attachmen
 ### Why no React/TypeScript/bundler?
 
 This add-in follows the same architecture as the [Seafile Thunderbird extension](https://github.com/datamate-rethink-it/seafile-thunderbird): vanilla JavaScript, no build step, no external dependencies. This means:
-- The Seafile API client (`api/seafile.js`) is shared 1:1 between both projects
+- The Seafile API client (`api/seafile.js`) shares the same API logic (endpoints, parameters, response parsing) with the Thunderbird version, adapted for Outlook's web context (CORS proxy for dev, no browser.i18n in the API layer)
 - No Node.js/npm required for development or deployment
 - Simple debugging (source = deployed code)
 - Lower maintenance burden
