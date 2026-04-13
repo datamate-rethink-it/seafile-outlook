@@ -94,7 +94,7 @@ There is no linter, formatter, test suite, or CI pipeline.
 - Translation files in `_locales/` as flat JSON (`{ "key": "value" }`)
 - HTML uses `data-i18n`, `data-i18n-placeholder`, `data-i18n-empty`, `data-i18n-title` attributes
 - `I18N.init()` detects locale from `Office.context.displayLanguage`, falls back to `navigator.language`, then English
-- 7 languages: English (primary), German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
+- 7 languages (95 keys each): English (primary), German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
 - When adding user-visible strings, add keys to all locale files
 
 ## SeafileAPI Class (api/seafile.js)
@@ -123,7 +123,9 @@ All API methods that can fail use this helper. The i18n keys (`errorQuotaExceede
 - **Token revocation**: on disconnect, calls `POST /api2/logout-device/` to invalidate the token server-side (best-effort, wrapped in try/catch)
 - **SSO reconnect**: settings page shows a dedicated reconnect UI when an SSO session expires, preserving the auth method context instead of showing a generic login form
 - **Password generation**: uses `crypto.getRandomValues()` (WebCrypto API), never Math.random()
-- **Folder picker**: reusable collapsible tree component loaded via `loadFolderPicker()`
+- **Folder picker**: reusable collapsible tree component with folder filter (shown when >8 folders)
+- **Reset to defaults**: save-attachments shows a "reset" link when library/folder differs from settings
+- **Filename fallback**: `fallbackFileName()` generates a name for attachments without one (`attachment-{id}.{ext}`)
 - **Auto-save**: settings changes are debounced (300ms) and saved via `autoSave()` with visual checkmark feedback
 - **Existing link detection**: before creating a new share link, checks for existing links via `getShareLinks()`
 
@@ -133,4 +135,4 @@ When reasoning about how **Seafile Server** or **Office.js** behaves (API respon
 
 ## Sister Project
 
-This add-in is ported from [seafile-thunderbird](https://github.com/datamate-rethink-it/seafile-thunderbird), a Thunderbird WebExtension with the same Seafile integration. The API client, password generator, and file icons are shared across both projects.
+This add-in is ported from [seafile-thunderbird](https://github.com/datamate-rethink-it/seafile-thunderbird), a Thunderbird WebExtension with the same Seafile integration. Both projects are functionally equivalent (excluding platform-specific features like Thunderbird's CloudFile API). The API client, password generator, file icons, and i18n keys are kept in sync across both projects.

@@ -35,9 +35,11 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 
 - **Save attachments to Seafile** — click the Seafile button in the ribbon to save received attachments
 - **Library & folder selection** — choose target library and navigate folders with a collapsible folder picker
+- **Folder filter** — search/filter folders by name when there are many subfolders
+- **Reset to defaults** — quickly return to your configured default library and folder
 - **Rename before saving** — click any filename to rename it before uploading (name part auto-selected, reset button to restore)
 - **Batch saving** — select multiple attachments at once, with synced "Select all" checkbox
-- **Per-file status** — visual SVG feedback for each file during upload
+- **Per-file status** — visual SVG feedback for each file during upload (with error tooltips)
 - **Duplicate handling** — configurable: rename automatically (default) or overwrite existing files
 
 ### Authentication
@@ -47,7 +49,8 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 - **Single Sign-On (SSO)** — login via browser using SAML, OAuth, Keycloak, or any SSO method configured on the server
 - **Display name** — shows user display name and contact email from Seafile account info
 - **Connection status** — clearly shows server, username, and authentication method (SSO or password)
-- **Disconnect** — one-click disconnect with automatic cleanup
+- **Disconnect** — one-click disconnect with server-side token revocation
+- **SSO reconnect** — dedicated reconnect UI when SSO session expires (instead of showing the password form)
 - **HTTPS validation** — warns when connecting over HTTP to non-localhost servers
 
 ### Settings & UI
@@ -57,6 +60,7 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 - **Auto-save** — all configuration changes are saved immediately with visual feedback
 - **Collapsible folder picker** — browse and select folders visually
 - **Encrypted library filtering** — encrypted libraries are excluded automatically
+- **Error handling** — clear messages for quota exceeded, file too large, too many files, and network errors
 - **Localization** — English, German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
 - **Dark mode** — automatically follows the system/Outlook theme preference
 - **Cross-platform** — works in Outlook on Windows, Mac, and Outlook Web (OWA)
