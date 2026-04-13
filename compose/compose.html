@@ -9,7 +9,7 @@
     .pane-body { padding: 12px; }
     .mode-tabs {
       display: flex;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--color-border-light);
       padding: 0;
       margin: 0 0 12px 0;
     }
@@ -19,47 +19,47 @@
       text-align: center;
       font-size: 12px;
       cursor: pointer;
-      color: #666;
+      color: var(--color-text-icon);
       border-bottom: 2px solid transparent;
       transition: color 0.15s, border-color 0.15s;
     }
-    .mode-tab:hover { color: #333; }
+    .mode-tab:hover { color: var(--color-text); }
     .mode-tab.active {
-      color: #0078d4;
-      border-bottom-color: #0078d4;
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
       font-weight: 600;
     }
     .mode-content { display: none; }
     .mode-content.active { display: block; }
     .upload-area {
-      border: 2px dashed #ccc;
+      border: 2px dashed var(--color-border);
       border-radius: 8px;
       padding: 24px 16px;
       text-align: center;
-      color: #888;
+      color: var(--color-text-hint);
       margin-bottom: 12px;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
     }
     .upload-area:hover, .upload-area.dragover {
-      border-color: #0078d4;
-      background: #f0f7ff;
-      color: #0078d4;
+      border-color: var(--color-primary);
+      background: var(--color-bg-highlight);
+      color: var(--color-primary);
     }
     .upload-area input[type="file"] { display: none; }
     .upload-area .upload-icon { font-size: 32px; margin-bottom: 8px; }
     .upload-progress {
       margin-top: 8px;
       font-size: 12px;
-      color: #555;
+      color: var(--color-text-secondary);
     }
     .current-path {
       font-size: 12px;
-      color: #555;
-      background: #f5f5f5;
+      color: var(--color-text-secondary);
+      background: var(--color-bg-input);
       padding: 5px 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
       margin-bottom: 8px;
       word-break: break-all;
     }
@@ -74,7 +74,7 @@
       gap: 6px;
       padding: 6px 0;
       font-size: 12px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--color-border-subtle);
     }
     .att-upload-list li:last-child { border-bottom: none; }
     .att-upload-list .att-status { margin-left: auto; }
@@ -107,7 +107,7 @@
 
     <!-- Mode: Upload Attachments -->
     <div class="mode-content active pane-body" id="mode-upload">
-      <p style="font-size:12px;color:#666;margin:0 0 12px 0;" data-i18n="uploadDesc">Upload email attachments or local files to Seafile and insert download links.</p>
+      <p style="font-size:12px;color:var(--color-text-icon);margin:0 0 12px 0;" data-i18n="uploadDesc">Upload email attachments or local files to Seafile and insert download links.</p>
 
       <!-- Existing email attachments -->
       <div id="emailAttachments" style="display:none;">
