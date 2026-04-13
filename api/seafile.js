@@ -266,6 +266,19 @@ class SeafileAPI {
   }
 
   /**
+   * Revoke an API token server-side (best-effort).
+   */
+  async logout(server, token) {
+    const resp = await fetch(proxyUrl(`${server}/api2/logout-device/`), {
+      method: "POST",
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (!resp.ok && resp.status !== 401) {
+      throw new Error(`Failed to logout (${resp.status})`);
+    }
+  }
+
+  /**
    * Check if a directory exists in a repo.
    */
   async dirExists(server, token, repoId, path) {

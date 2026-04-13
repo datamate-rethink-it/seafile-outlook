@@ -41,6 +41,12 @@ const fileLinkCustomPasswordInput = document.getElementById("fileLinkCustomPassw
 const fileLinkExpireDaysInput = document.getElementById("fileLinkExpireDays");
 const ssoBtn = document.getElementById("ssoBtn");
 const ssoStatus = document.getElementById("ssoStatus");
+const ssoReconnectEl = document.getElementById("ssoReconnect");
+const reconnectServer = document.getElementById("reconnectServer");
+const reconnectStatus = document.getElementById("reconnectStatus");
+const ssoReconnectBtn = document.getElementById("ssoReconnectBtn");
+const ssoReconnectPoll = document.getElementById("ssoReconnectPoll");
+const ssoSwitchLogin = document.getElementById("ssoSwitchLogin");
 const uploadFolderPicker = document.getElementById("uploadFolderPicker");
 const saveFolderPicker = document.getElementById("saveFolderPicker");
 
@@ -307,9 +313,19 @@ ssoBtn.addEventListener("click", async () => {
 });
 
 // --- Disconnect ---
-disconnectBtn.addEventListener("click", () => {
+disconnectBtn.addEventListener("click", async () => {
   const config = getAccountConfig(currentAccountId) || {};
   const serverUrl = config.serverUrl || "";
+
+  // Revoke token server-side (best-effort)
+  if (config.apiToken && config.serverUrl) {
+    try {
+      await seafile.logout(config.serverUrl, config.apiToken);
+    } catch (e) {
+      console.error("Token revocation failed (continuing disconnect):", e);
+    }
+  }
+
   saveAccountConfig(currentAccountId, { serverUrl });
 
   connectedInfo.style.display = "none";
@@ -326,6 +342,76 @@ disconnectBtn.addEventListener("click", () => {
   disableSettingsTabs();
   switchTab("connection");
   refreshAccountSelector();
+});
+
+// --- SSO Reconnect ---
+ssoReconnectBtn.addEventListener("click", async () => {
+  const config = getAccountConfig(currentAccountId) || {};
+  const serverUrl = config.serverUrl;
+  if (!serverUrl) return;
+
+  ssoReconnectBtn.disabled = true;
+  reconnectStatus.className = "status";
+
+  try {
+    const result = await seafile.createSSOLink(serverUrl);
+    const match = result.link.match(/\/client-sso\/([^/?]+)/);
+    if (!match) throw new Error("Failed to parse SSO token.");
+
+    Office.context.ui.displayDialogAsync(result.link, { height: 60, width: 40 }, (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        window.open(result.link, "_blank");
+      }
+    });
+
+    showStatus(ssoReconnectPoll, I18N.get("ssoWaiting") || "Waiting for authentication in browser...", "info");
+
+    let elapsed = 0;
+    const pollInterval = setInterval(async () => {
+      elapsed += 3;
+      if (elapsed > 300) {
+        clearInterval(pollInterval);
+        showStatus(ssoReconnectPoll, I18N.get("ssoTimeout") || "SSO login timed out.", "error");
+        ssoReconnectBtn.disabled = false;
+        return;
+      }
+      try {
+        const status = await seafile.checkSSOStatus(serverUrl, match[1]);
+        if (status.status === "success" && (status.api_token || status.apiToken || status.api_key)) {
+          clearInterval(pollInterval);
+          ssoReconnectPoll.className = "status";
+          ssoReconnectEl.style.display = "none";
+          await onConnected({
+            serverUrl,
+            username: status.username,
+            apiToken: status.api_token || status.apiToken || status.api_key,
+            authMethod: "sso",
+          });
+        } else if (status.status === "error") {
+          clearInterval(pollInterval);
+          showStatus(ssoReconnectPoll, I18N.get("ssoError") || "SSO login failed.", "error");
+          ssoReconnectBtn.disabled = false;
+        }
+      } catch (e) {
+        console.error("SSO reconnect poll error:", e);
+      }
+    }, 3000);
+  } catch (e) {
+    showStatus(reconnectStatus, `SSO failed: ${e.message}`, "error");
+    ssoReconnectBtn.disabled = false;
+  }
+});
+
+ssoSwitchLogin.addEventListener("click", (e) => {
+  e.preventDefault();
+  const config = getAccountConfig(currentAccountId) || {};
+  ssoReconnectEl.style.display = "none";
+  loginForm.style.display = "block";
+  serverUrlInput.value = config.serverUrl || "";
+  usernameInput.value = "";
+  passwordInput.value = "";
+  ssoBtn.disabled = false;
+  connectBtn.disabled = false;
 });
 
 // --- Repo Loading ---
@@ -518,6 +604,7 @@ async function loadAccountUI() {
   if (!config || !config.apiToken) {
     // Not connected - show login form
     connectedInfo.style.display = "none";
+    ssoReconnectEl.style.display = "none";
     loginForm.style.display = "block";
     serverUrlInput.value = (config && config.serverUrl) || "";
     usernameInput.value = "";
@@ -532,6 +619,7 @@ async function loadAccountUI() {
   }
 
   // Connected - load settings
+  ssoReconnectEl.style.display = "none";
   serverUrlInput.value = config.serverUrl || "";
   usernameInput.value = config.username || "";
   sharePasswordModeSelect.value = config.sharePasswordMode || "none";
@@ -580,10 +668,23 @@ async function loadAccountUI() {
     navigateUploadFolder(uploadCurrentPath);
     navigateSaveFolder(saveCurrentPath);
   } catch (e) {
-    showStatus(connectStatus, "Session expired. Please reconnect.", "error");
     connectedInfo.style.display = "none";
-    loginForm.style.display = "block";
     disableSettingsTabs();
+
+    if (config.authMethod === "sso") {
+      // Show dedicated SSO reconnect UI
+      loginForm.style.display = "none";
+      ssoReconnectEl.style.display = "block";
+      reconnectServer.textContent = config.serverUrl || "";
+      showStatus(reconnectStatus, I18N.get("sessionExpired") || "Session expired. Please reconnect.", "error");
+      ssoReconnectBtn.disabled = false;
+    } else {
+      // Show standard login form for password users
+      loginForm.style.display = "block";
+      serverUrlInput.value = config.serverUrl || "";
+      usernameInput.value = config.username || "";
+      showStatus(connectStatus, I18N.get("sessionExpired") || "Session expired. Please reconnect.", "error");
+    }
   }
 }
 
