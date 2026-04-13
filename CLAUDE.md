@@ -149,6 +149,10 @@ All API methods that can fail use this helper. The i18n keys (`errorQuotaExceede
 
 When reasoning about how **Seafile Server** or **Office.js** behaves (API responses, error codes, dialog behavior, etc.), **never guess or assume**. Always verify by reading the actual source code, testing against a running instance, or checking official documentation. If verification is not possible, explicitly state that the claim is unverified.
 
+## TODO
+
+- **AppSource listing**: Publish the add-in to the Microsoft Commercial Marketplace (AppSource) so it appears in the official Admin Center catalog. Requirements: Partner Center account, SupportUrl and AppDomains in manifest.xml, hosted privacy policy URL, EULA, 128x128 icon, store listing with screenshots (1280x720 or 1366x768), and passing Microsoft's manual review.
+
 ## Sister Project
 
 This add-in is ported from [seafile-thunderbird](https://github.com/datamate-rethink-it/seafile-thunderbird), a Thunderbird WebExtension with the same Seafile integration. Both projects are functionally equivalent (excluding platform-specific features like Thunderbird's CloudFile API). The API client, password generator, file icons, and i18n keys are kept in sync across both projects.
