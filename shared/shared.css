@@ -690,12 +690,18 @@ h3 {
 /* --- Select All --- */
 
 .select-all {
+  margin-top: 12px;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);
+}
+
+.select-all label {
+  margin-bottom: 0;
+  line-height: 1;
 }
 
 /* --- Detail View (for insert-link) --- */

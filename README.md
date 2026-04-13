@@ -6,6 +6,16 @@ Built with the modern [Office Web Add-in](https://learn.microsoft.com/en-us/offi
 
 Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 
+## Screenshots
+
+<p>
+  <img src="docs/compose-upload.png" alt="Upload Attachments" width="280">
+  <img src="docs/compose-insert-link.png" alt="Insert Seafile Link" width="280">
+  <img src="docs/read-save.png" alt="Save Attachments" width="280">
+  <img src="docs/settings-connection.png" alt="Settings – Connection" width="280">
+  <img src="docs/settings-upload.png" alt="Settings – Upload" width="280">
+</p>
+
 ## Features
 
 ### Upload attachments (outgoing)
@@ -86,6 +96,8 @@ The add-in is hosted centrally by [datamate](https://datamate.org) at `https://o
    6. Assign to users (individual, group, or entire organization) and complete the deployment
 
 The add-in will appear in users' Outlook ribbon within a few hours (may take up to 24 hours due to caching).
+
+![Seafile for Outlook in the Microsoft 365 Admin Center](docs/admin-center.png)
 
 > **Note:** The `https://aka.ms/olksideload` sideloading method no longer supports custom add-in uploads in the new Outlook. Use the Admin Center deployment described above instead.
 
