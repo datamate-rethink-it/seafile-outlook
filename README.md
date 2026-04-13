@@ -57,7 +57,8 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 - **Auto-save** — all configuration changes are saved immediately with visual feedback
 - **Collapsible folder picker** — browse and select folders visually
 - **Encrypted library filtering** — encrypted libraries are excluded automatically
-- **Localization** — English, German (more languages planned)
+- **Localization** — English, German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
+- **Dark mode** — automatically follows the system/Outlook theme preference
 - **Cross-platform** — works in Outlook on Windows, Mac, and Outlook Web (OWA)
 
 ## Requirements
@@ -188,7 +189,7 @@ When reading an email, click **Save to Seafile** in the ribbon. Select attachmen
 │   ├── read.html              # Read task pane (save attachments)
 │   └── read.js                # Save attachments logic
 ├── assets/                    # Add-in icons
-├── _locales/                  # Translations (en, de)
+├── _locales/                  # Translations (en, de, fr, es, pt_BR, ru, zh_CN)
 └── PRIVACY.md                 # Privacy policy
 ```
 
