@@ -8,13 +8,25 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 
 ## Screenshots
 
-<p>
-  <img src="docs/compose-upload.png" alt="Upload Attachments" width="280">
-  <img src="docs/compose-insert-link.png" alt="Insert Seafile Link" width="280">
-  <img src="docs/read-save.png" alt="Save Attachments" width="280">
-  <img src="docs/settings-connection.png" alt="Settings – Connection" width="280">
-  <img src="docs/settings-upload.png" alt="Settings – Upload" width="280">
-</p>
+![Upload Attachments](docs/compose-upload.png)
+*Upload email attachments or local files to Seafile and insert download links into emails.*
+
+![Insert Seafile Link](docs/compose-insert-link.png)
+*Browse your Seafile libraries, filter by name, and insert share links directly into emails.*
+
+![Save Attachments](docs/read-save.png)
+*Save received email attachments directly to your Seafile server.*
+
+<details>
+<summary>More screenshots</summary>
+
+![Settings – Connection](docs/settings-connection.png)
+*Connect to your Seafile server with username/password, 2FA, or Single Sign-On (SSO).*
+
+![Settings – Upload](docs/settings-upload.png)
+*Configure target library, upload folder, password protection, and link expiration.*
+
+</details>
 
 ## Features
 
