@@ -74,15 +74,20 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 
 ### Using the hosted version (recommended)
 
-The add-in is hosted centrally by [datamate](https://datamate.org) at `https://outlook.de.seafile.com`. No self-hosting required.
+The add-in is hosted centrally by [datamate](https://datamate.org) at `https://outlook.datamate.org`. No self-hosting required.
 
 1. **Configure CORS** on your Seafile server (see [CORS configuration](#cors-configuration) below)
-2. **Download the manifest** from `https://outlook.de.seafile.com/manifest.xml`
-3. **Deploy the manifest** to your users:
-   - **Organization-wide**: Upload via **Microsoft 365 Admin Center** → **Integrated Apps** and assign to users/groups
-   - **Individual**: Go to `https://aka.ms/olksideload`, click **Add a custom add-in** → **Add from File**, and upload `manifest.xml`
+2. **Deploy the add-in** via the **Microsoft 365 Admin Center** (requires M365 admin rights):
+   1. Go to [admin.cloud.microsoft.com](https://admin.cloud.microsoft.com) → **Settings** → **Integrated Apps**
+   2. Click **Upload custom apps**
+   3. Set **App type** to **Office Add-in**
+   4. Select **Provide link to manifest file** and enter: `https://outlook.datamate.org/manifest.xml`
+   5. Click **Validate**, then **Next**
+   6. Assign to users (individual, group, or entire organization) and complete the deployment
 
-The add-in will appear automatically in users' Outlook ribbon.
+The add-in will appear in users' Outlook ribbon within a few hours (may take up to 24 hours due to caching).
+
+> **Note:** The `https://aka.ms/olksideload` sideloading method no longer supports custom add-in uploads in the new Outlook. Use the Admin Center deployment described above instead.
 
 ### Self-hosting
 
@@ -95,7 +100,7 @@ You can also host the add-in files on your own HTTPS web server (e.g. the same s
 
 > **Note:** The add-in consists entirely of static files (HTML, CSS, JavaScript). There is no server-side code, no database, and no secrets in the source. The code is open source and always visible to anyone who can access the hosting URL — this is by design, as with any web application.
 
-### For development (sideloading)
+### For development
 
 1. Clone this repository
 2. Generate dev certificates and start the local server:
@@ -104,9 +109,11 @@ You can also host the add-in files on your own HTTPS web server (e.g. the same s
    node dev/server.js
    ```
 3. Open `https://localhost:3000` in your browser and accept the self-signed certificate
-4. Sideload the manifest:
-   - **Outlook Web**: Go to `https://aka.ms/olksideload` and upload `manifest.xml`
-   - **Outlook Desktop**: Settings → Manage Add-ins → Upload custom add-in
+4. The task panes are accessible directly in the browser for UI testing:
+   - `https://localhost:3000/settings/settings.html` — Settings (login, SSO, all config)
+   - `https://localhost:3000/compose/compose.html` — Compose (upload, insert link)
+   - `https://localhost:3000/read/read.html` — Read (save attachments)
+5. To test inside Outlook, deploy via the Admin Center as described above (localhost URLs won't work — use a public HTTPS URL)
 
 The dev server includes a CORS proxy so you can test against any Seafile server without configuring CORS headers.
 
@@ -142,7 +149,7 @@ Add the following to your Seafile **nginx configuration** (typically in the `loc
 
 ```nginx
 # CORS for Seafile Outlook Add-in
-add_header Access-Control-Allow-Origin "https://outlook.de.seafile.com" always;
+add_header Access-Control-Allow-Origin "https://outlook.datamate.org" always;
 add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
 add_header Access-Control-Allow-Headers "Authorization, Content-Type, X-SEAFILE-OTP" always;
 
@@ -192,7 +199,7 @@ When reading an email, click **Save to Seafile** in the ribbon. Select attachmen
 ├── read/
 │   ├── read.html              # Read task pane (save attachments)
 │   └── read.js                # Save attachments logic
-├── assets/                    # Add-in icons
+├── assets/                    # Add-in icons (PNG required by Microsoft, SVG sources included)
 ├── _locales/                  # Translations (en, de, fr, es, pt_BR, ru, zh_CN)
 └── PRIVACY.md                 # Privacy policy
 ```

@@ -6,15 +6,15 @@
   xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
   xsi:type="MailApp">
 
-  <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
+  <Id>173d34bd-3ec7-4726-8d67-34c99a215675</Id>
   <Version>0.1.0</Version>
   <ProviderName>datamate</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Seafile for Outlook"/>
   <Description DefaultValue="Share email attachments via Seafile download links, insert links to existing Seafile files, and save received attachments to Seafile."/>
 
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.svg"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.svg"/>
+  <IconUrl DefaultValue="https://outlook.datamate.org/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://outlook.datamate.org/assets/icon-80.png"/>
   <SupportUrl DefaultValue="https://www.seafile.com"/>
 
   <Hosts>
@@ -30,7 +30,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://localhost:3000/read/read.html"/>
+        <SourceLocation DefaultValue="https://outlook.datamate.org/read/read.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -157,16 +157,16 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="icon16" DefaultValue="https://localhost:3000/assets/icon-16.svg"/>
-        <bt:Image id="icon32" DefaultValue="https://localhost:3000/assets/icon-32.svg"/>
-        <bt:Image id="icon80" DefaultValue="https://localhost:3000/assets/icon-80.svg"/>
+        <bt:Image id="icon16" DefaultValue="https://outlook.datamate.org/assets/icon-16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://outlook.datamate.org/assets/icon-32.png"/>
+        <bt:Image id="icon80" DefaultValue="https://outlook.datamate.org/assets/icon-80.png"/>
       </bt:Images>
 
       <bt:Urls>
-        <bt:Url id="composeTaskpaneUrl" DefaultValue="https://localhost:3000/compose/compose.html"/>
-        <bt:Url id="insertTaskpaneUrl" DefaultValue="https://localhost:3000/compose/compose.html?mode=insert"/>
-        <bt:Url id="readTaskpaneUrl" DefaultValue="https://localhost:3000/read/read.html"/>
-        <bt:Url id="settingsTaskpaneUrl" DefaultValue="https://localhost:3000/settings/settings.html"/>
+        <bt:Url id="composeTaskpaneUrl" DefaultValue="https://outlook.datamate.org/compose/compose.html"/>
+        <bt:Url id="insertTaskpaneUrl" DefaultValue="https://outlook.datamate.org/compose/compose.html?mode=insert"/>
+        <bt:Url id="readTaskpaneUrl" DefaultValue="https://outlook.datamate.org/read/read.html"/>
+        <bt:Url id="settingsTaskpaneUrl" DefaultValue="https://outlook.datamate.org/settings/settings.html"/>
       </bt:Urls>
 
       <bt:ShortStrings>

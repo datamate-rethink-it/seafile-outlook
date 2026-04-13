@@ -7,7 +7,8 @@ Built by datamate GmbH. Apache 2.0 license.
 
 - **Outlook** via Office.js (Mailbox Requirement Set 1.8+), **Seafile Server** >= 10.0
 - Vanilla JavaScript (ES2020+), no build tools, no dependencies, no TypeScript
-- Add-in ID: `a1b2c3d4-e5f6-7890-abcd-ef1234567890` (manifest.xml)
+- Add-in ID: `173d34bd-3ec7-4726-8d67-34c99a215675` (manifest.xml)
+- Production URL: `https://outlook.datamate.org`
 
 ## Project Structure
 
@@ -51,6 +52,16 @@ node server.js                # serves all files + proxies Seafile API calls
 ```
 
 There is no linter, formatter, test suite, or CI pipeline.
+
+## Deployment
+
+**Production** is deployed to `https://outlook.datamate.org` (static files served by nginx).
+
+**Manifest**: `manifest.xml` contains the production URLs (`https://outlook.datamate.org`). The dev server serves files directly in the browser, so the manifest URLs are irrelevant for local development.
+
+**Admin Center deployment**: Office Add-ins are deployed via **Microsoft 365 Admin Center** → **Settings** → **Integrated Apps** → **Upload custom apps** → **Office Add-in** → provide manifest URL. The old `aka.ms/olksideload` method no longer supports custom add-in uploads in new Outlook.
+
+**Icon format**: Microsoft requires **PNG** icons in the manifest (SVG is rejected). SVG sources are kept alongside PNGs in `assets/`.
 
 ## Code Conventions
 
