@@ -77,5 +77,8 @@
   "dropOrClick": "Click to select files or drag & drop",
   "uploadSuccess": "Files uploaded and links inserted!",
   "composeUploadLabel": "Upload Attachments",
-  "composeInsertLabel": "Insert Link"
+  "composeInsertLabel": "Insert Link",
+  "errorQuotaExceeded": "Storage quota exceeded. Free up space on the Seafile server or contact your administrator.",
+  "errorFileTooLarge": "The file is too large to upload.",
+  "errorNetworkError": "Could not connect to Seafile server. Please check your network connection and server URL."
 }

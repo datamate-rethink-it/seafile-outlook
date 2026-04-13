@@ -77,5 +77,8 @@
   "dropOrClick": "点击选择文件或拖放",
   "uploadSuccess": "文件已上传，链接已插入！",
   "composeUploadLabel": "上传附件",
-  "composeInsertLabel": "插入链接"
+  "composeInsertLabel": "插入链接",
+  "errorQuotaExceeded": "存储配额已超出。请在 Seafile 服务器上释放空间或联系管理员。",
+  "errorFileTooLarge": "文件太大，无法上传。",
+  "errorNetworkError": "无法连接到 Seafile 服务器。请检查网络连接和服务器 URL。"
 }

@@ -238,6 +238,7 @@ uploadAttBtn.addEventListener("click", async () => {
       cb.disabled = true;
     } catch (e) {
       statusEl.innerHTML = STATUS_ICONS.error;
+      statusEl.title = e.message;
       console.error(`Failed to upload ${fileName}:`, e);
     }
   }

@@ -108,6 +108,16 @@ All Seafile server communication goes through this class:
 
 The `proxyUrl()` helper routes calls through the dev proxy on localhost.
 
+## Error Handling
+
+**`_extractErrorMessage(status, text, fallback)`** in `SeafileAPI` handles all API error responses consistently:
+- Known Seafile status codes: **443** = storage quota exceeded, **442** = file too large
+- Parses server error messages from JSON responses (`error_msg`, `error`, `detail`)
+- Falls back to `"${fallback} (${status})"` if no server message is found
+- Unlike the Thunderbird version, does **not** use i18n in the API layer (no `browser.i18n` available) — uses English fallback strings instead
+
+All API methods that can fail use this helper. The i18n keys (`errorQuotaExceeded`, `errorFileTooLarge`, `errorNetworkError`) exist in all locale files for use by the UI layer when needed.
+
 ## Key Patterns
 
 - **Token revocation**: on disconnect, calls `POST /api2/logout-device/` to invalidate the token server-side (best-effort, wrapped in try/catch)

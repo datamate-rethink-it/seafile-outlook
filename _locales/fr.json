@@ -77,5 +77,8 @@
   "dropOrClick": "Cliquer pour sélectionner ou glisser-déposer",
   "uploadSuccess": "Fichiers téléversés et liens insérés !",
   "composeUploadLabel": "Téléverser les pièces jointes",
-  "composeInsertLabel": "Insérer un lien"
+  "composeInsertLabel": "Insérer un lien",
+  "errorQuotaExceeded": "Quota de stockage dépassé. Libérez de l'espace sur le serveur Seafile ou contactez votre administrateur.",
+  "errorFileTooLarge": "Le fichier est trop volumineux pour être envoyé.",
+  "errorNetworkError": "Connexion au serveur Seafile impossible. Vérifiez votre connexion réseau et l'URL du serveur."
 }

@@ -77,5 +77,8 @@
   "dropOrClick": "Klicken zum Auswählen oder Dateien hierher ziehen",
   "uploadSuccess": "Dateien hochgeladen und Links eingefügt!",
   "composeUploadLabel": "Anhänge hochladen",
-  "composeInsertLabel": "Link einfügen"
+  "composeInsertLabel": "Link einfügen",
+  "errorQuotaExceeded": "Speicherkontingent überschritten. Bitte Speicherplatz auf dem Seafile-Server freigeben oder den Administrator kontaktieren.",
+  "errorFileTooLarge": "Die Datei ist zu groß zum Hochladen.",
+  "errorNetworkError": "Verbindung zum Seafile-Server fehlgeschlagen. Bitte Netzwerkverbindung und Server-URL prüfen."
 }

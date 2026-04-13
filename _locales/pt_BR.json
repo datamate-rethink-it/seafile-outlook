@@ -77,5 +77,8 @@
   "dropOrClick": "Clique para selecionar ou arraste e solte",
   "uploadSuccess": "Arquivos enviados e links inseridos!",
   "composeUploadLabel": "Enviar anexos",
-  "composeInsertLabel": "Inserir link"
+  "composeInsertLabel": "Inserir link",
+  "errorQuotaExceeded": "Cota de armazenamento excedida. Libere espaço no servidor Seafile ou entre em contato com o administrador.",
+  "errorFileTooLarge": "O arquivo é grande demais para ser enviado.",
+  "errorNetworkError": "Não foi possível conectar ao servidor Seafile. Verifique sua conexão de rede e a URL do servidor."
 }

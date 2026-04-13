@@ -240,6 +240,7 @@ saveBtn.addEventListener("click", async () => {
       cb.disabled = true;
     } catch (e) {
       statusEl.innerHTML = STATUS_ICONS.error;
+      statusEl.title = e.message;
       errorCount++;
       console.error(`Failed to upload ${att.name}:`, e);
     }

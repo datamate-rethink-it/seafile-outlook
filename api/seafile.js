@@ -21,6 +21,28 @@ function proxyUrl(url) {
 class SeafileAPI {
 
   /**
+   * Extract a user-friendly error message from a failed API response.
+   * Handles known Seafile status codes (443 = quota, 442 = file too large)
+   * and tries to parse server error messages from the response body.
+   */
+  _extractErrorMessage(status, text, fallback) {
+    if (status === 443) {
+      return "Storage quota exceeded.";
+    }
+    if (status === 442) {
+      return "The file is too large to upload.";
+    }
+    try {
+      const json = JSON.parse(text);
+      let detail = json.error_msg || json.error || json.detail || "";
+      if (Array.isArray(detail)) detail = detail.join(". ");
+      detail = String(detail).replace(/\n+$/, "").trim();
+      if (detail) return detail;
+    } catch { /* not JSON */ }
+    return `${fallback} (${status})`;
+  }
+
+  /**
    * Authenticate with username/password and get an API token.
    */
   async getToken(server, username, password, otp) {
@@ -36,7 +58,7 @@ class SeafileAPI {
     if (!resp.ok) {
       const text = await resp.text();
       console.error(`Auth failed (${resp.status}):`, text);
-      throw new Error(`Authentication failed (${resp.status})`);
+      throw new Error(this._extractErrorMessage(resp.status, text, "Authentication failed"));
     }
     const data = await resp.json();
     return data.token;
@@ -103,7 +125,8 @@ class SeafileAPI {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
-      throw new Error(`Failed to list libraries (${resp.status})`);
+      const text = await resp.text();
+      throw new Error(this._extractErrorMessage(resp.status, text, "Failed to list libraries"));
     }
     const data = await resp.json();
     return data.repos || data;
@@ -118,7 +141,8 @@ class SeafileAPI {
       headers: { Authorization: `Token ${token}` },
     });
     if (!resp.ok) {
-      throw new Error(`Failed to get upload link (${resp.status})`);
+      const text = await resp.text();
+      throw new Error(this._extractErrorMessage(resp.status, text, "Failed to get upload link"));
     }
     const link = await resp.json();
     return typeof link === "string" ? link : link.upload_link || link;
@@ -146,7 +170,7 @@ class SeafileAPI {
     if (!resp.ok) {
       const text = await resp.text();
       console.error(`Upload failed (${resp.status}):`, text);
-      throw new Error(`File upload failed (${resp.status})`);
+      throw new Error(this._extractErrorMessage(resp.status, text, "File upload failed"));
     }
     const data = await resp.json();
     return Array.isArray(data) ? data[0] : data;
@@ -189,13 +213,7 @@ class SeafileAPI {
     if (!resp.ok) {
       const text = await resp.text();
       console.error(`Share link failed (${resp.status}):`, text);
-      let detail = "";
-      try {
-        const json = JSON.parse(text);
-        detail = json.error_msg || json.detail || json.password || "";
-        if (Array.isArray(detail)) detail = detail.join(". ");
-      } catch { /* not JSON */ }
-      throw new Error(detail || `Failed to create share link (${resp.status})`);
+      throw new Error(this._extractErrorMessage(resp.status, text, "Failed to create share link"));
     }
     return await resp.json();
   }
@@ -245,7 +263,8 @@ class SeafileAPI {
       }
     );
     if (!resp.ok && resp.status !== 409) {
-      throw new Error(`Failed to create directory (${resp.status})`);
+      const text = await resp.text();
+      throw new Error(this._extractErrorMessage(resp.status, text, "Failed to create directory"));
     }
   }
 
@@ -260,7 +279,8 @@ class SeafileAPI {
       }
     );
     if (!resp.ok) {
-      throw new Error(`Failed to list directory (${resp.status})`);
+      const text = await resp.text();
+      throw new Error(this._extractErrorMessage(resp.status, text, "Failed to list directory"));
     }
     return await resp.json();
   }
