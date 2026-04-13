@@ -87,9 +87,9 @@ function buildShareLinkHtml(params) {
     metaLines += `<br>${i("emailExpires", "Expires:")} ${expiryDate.toLocaleDateString()}`;
   }
 
-  const logoSvg = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIxMCAxIDU2IDUyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMy44MDYsMjIuMTYxYzAsLTAuOTIgMC43NDYsLTEuNjU4IDEuNjY3LC0xLjY1OGMwLjQzOSwwIDAuODI5LDAuMTc0IDEuMTI4LDAuNDQ4Yy0wLjAwOCwtMC4xNDkgLTAuMDE3LC0wLjI5IC0wLjAxNywtMC40MzljMCwtMy4wNzYgMi40ODcsLTUuNTY0IDUuNTY0LC01LjU2NGMwLjc5NiwwIDEuNTUsMC4xNjYgMi4yMzksMC40NzNjLTAuMDA4LC0wLjE1OCAtMC4wMTcsLTAuMzE1IC0wLjAxNywtMC40NjRjMCwtNC42MSAzLjczMSwtOC4zNDEgOC4zNDEsLTguMzQxYzQuNTc3LDAgOC4yOTEsMy42OSA4LjM0MSw4LjI1OGMtMS41MDksMS4zMjcgLTIuNzExLDMuMDAxIC0zLjQ4Miw0Ljg5MmMtMS40OTIsLTAuOTI5IC0zLjI1LC0xLjQ4NCAtNS4xMzIsLTEuNDg0Yy0zLjg4LDAgLTcuMjMsMi4yMDYgLTguNzk3LDUuNTM5bC01Ljk0NiwwbC0yLjIyMiwwYy0wLjkyMSwtMC4wMTggLTEuNjY3LC0wLjczOSAtMS42NjcsLTEuNjZabTQzLjkyLC00Ljk4M2MtMi4wNjUsLTIuMDY1IC00LjkwOSwtMy4zNDEgLTguMDU5LC0zLjM0MWMtNS43NDYsMCAtMTAuNTA1LDQuMjU0IC0xMS4yODUsOS43OTJjLTEuNDE4LC0xLjg5IC0zLjY4MSwtMy4xMTggLTYuMjI3LC0zLjExOGMtNC4zMDMsMCAtNy43ODYsMy40OTEgLTcuNzg2LDcuNzg2YzAsMS4yNTIgMC4yOTgsMi40MjkgMC44MjEsMy40ODJjLTIuNzAzLDAuNTQ3IC00LjcxLDIuNjQ1IC00LjcxLDUuMTQxYzAsMi45MTkgMi43MzYsNS4yODIgNi4xMTksNS4yODJjMS40OTIsMCAyLjg2MSwtMC40NjQgMy45MjIsLTEuMjM1bDEyLjUxMiwtMTIuMzA1YzEuMzg1LC0xLjI2OSAzLjIyNSwtMi4wNCA1LjI0OCwtMi4wNGM0LjIyOSwwIDcuNjcsMy4zNzUgNy43ODYsNy41NzhjMCwwIDAsLTAuMDA4IC0wLjAwOCwtMC4wMDhjMC4wNjYsMS4yNDQgLTAuNTgsMi40OTYgLTEuNzc0LDMuMTg0Yy0xLjY2NywwLjk2MiAtMy43NTYsMC40NDggLTQuNjY4LC0xLjEzNmMtMC45MiwtMS41OTIgLTAuMzE1LC0zLjY1NyAxLjM1MiwtNC42MThjMC4zOSwtMC4yMjQgMC43OTYsLTAuMzY1IDEuMjExLC0wLjQzOWMtMC4zNTcsLTAuMDc1IC0wLjczLC0wLjEwOCAtMS4xMTEsLTAuMTA4Yy0zLjA2OCwwIC01LjU2NCwyLjQ4NyAtNS41NjQsNS41NjRjMCwzLjA3NiAyLjQ4Nyw1LjU2NCA1LjU2NCw1LjU2NGMwLjEzMywwIDAuMjc0LC0wLjAwOCAwLjQwNiwtMC4wMTdsLTAuMDA4LC0wLjAxN2wwLjE1OCwtMC4wMTdsMTAuOTIsMGwwLDAuMDQxYzMuMzQxLC0wLjE0OSA2LjUsLTMuMjI1IDYuNSwtNi45NzNjMCwtMy44MzkgLTMuMjgzLC02Ljk3MyAtNy4xMjIsLTYuOTczYy0wLjAwOCwwIC0wLjAwOCwwIC0wLjAxNywwYy0wLjYyMiwxLjExMSAtMS4zNzYsMS43NTggLTIuMjMsMi40NTRjMC44OTUsLTEuNjMzIDEuNDEsLTMuNDkxIDEuNDEsLTUuNDgxYy0wLjAxOSwtMy4xNDEgLTEuMjk2LC01Ljk3NyAtMy4zNiwtOC4wNDJaIiBzdHlsZT0iZmlsbDp1cmwoI19MaW5lYXIxKTtmaWxsLXJ1bGU6bm9uemVybzsiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Il9MaW5lYXIxIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMi4xNzkxNmUtMTUsMzUuNTg4NCwtMzUuNTg4NCwyLjE3OTE2ZS0xNSw0MS40MjIsNi42MjAxNSkiPjxzdG9wIG9mZnNldD0iMCIgc3R5bGU9InN0b3AtY29sb3I6I2ZhZDk1NjtzdG9wLW9wYWNpdHk6MSIvPjxzdG9wIG9mZnNldD0iMSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmYTEwZjtzdG9wLW9wYWNpdHk6MSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==`;
+  const logoUrl = "https://outlook.datamate.org/assets/icon-32.png";
 
-  return `<br><div style="padding:15px;background:#dae3f0;border-radius:4px;font-family:sans-serif;"><div style="font-size:13px;color:#333;margin-bottom:8px;">${i("emailLinkedFile", "I've linked a file to this email:")}</div><div style="background:#fff;border:1px solid #c8cfd6;border-radius:4px;padding:10px 12px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="width:28px;vertical-align:top;padding-right:8px;"><span style="font-size:20px;color:#7b8a99;">&#128206;</span></td><td style="vertical-align:top;font-size:12px;color:#555;"><a href="${safeLink}" style="color:#0060df;font-size:13px;text-decoration:underline;">${safeFileName}</a><br>${metaLines}</td><td style="width:50px;vertical-align:middle;text-align:center;"><img src="${logoSvg}" alt="Seafile" width="28" height="28" style="display:block;margin:0 auto 2px auto;"><div style="font-size:9px;color:#888;">Seafile</div></td></tr></table></div><div style="font-size:11px;color:#555;margin-top:6px;">${i("emailLearnMore", "Learn more about")} <a href="https://www.seafile.com" style="color:#0060df;">Seafile</a>.</div></div>`;
+  return `<br><div style="padding:15px;background:#dae3f0;border-radius:4px;font-family:sans-serif;"><div style="font-size:13px;color:#333;margin-bottom:8px;">${i("emailLinkedFile", "I've linked a file to this email:")}</div><div style="background:#fff;border:1px solid #c8cfd6;border-radius:4px;padding:10px 12px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="width:28px;vertical-align:top;padding-right:8px;"><span style="font-size:20px;color:#7b8a99;">&#128206;</span></td><td style="vertical-align:top;font-size:12px;color:#555;"><a href="${safeLink}" style="color:#0060df;font-size:13px;text-decoration:underline;">${safeFileName}</a><br>${metaLines}</td><td style="width:50px;vertical-align:middle;text-align:center;"><img src="${logoUrl}" alt="Seafile" width="28" height="28" style="display:block;margin:0 auto 2px auto;"><div style="font-size:9px;color:#888;">Seafile</div></td></tr></table></div><div style="font-size:11px;color:#555;margin-top:6px;">${i("emailLearnMore", "Learn more about")} <a href="https://www.seafile.com" style="color:#0060df;">Seafile</a>.</div></div>`;
 }
 
 /**
@@ -112,4 +112,31 @@ function buildShareLinkText(params) {
   }
   text += "\n";
   return text;
+}
+
+/**
+ * Detect the Outlook theme and apply the corresponding data-theme attribute.
+ * Uses Office.context.officeTheme.bodyBackgroundColor when available,
+ * falls back to prefers-color-scheme media query.
+ */
+function applyOfficeTheme() {
+  let isDark = false;
+  try {
+    if (typeof Office !== "undefined" && Office.context && Office.context.officeTheme) {
+      const bg = Office.context.officeTheme.bodyBackgroundColor;
+      if (bg) {
+        const hex = bg.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+        isDark = luminance < 0.5;
+      }
+    } else {
+      isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+  } catch {
+    isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
 }

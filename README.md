@@ -143,21 +143,72 @@ This works with any SSO method configured on the server (SAML, OAuth, Keycloak, 
 
 ### CORS configuration
 
-When using the hosted version (or any setup where the add-in and Seafile are on different domains), the Seafile server must allow cross-origin requests from the add-in domain.
+When using the hosted version (or any setup where the add-in and Seafile are on different domains), the Seafile server must allow cross-origin requests from the add-in domain. Without CORS, the add-in can authenticate but all subsequent API calls will fail silently.
 
-Add the following to your Seafile **nginx configuration** (typically in the `location /` or `location /api` block):
+**Important:** CORS headers must be set on the **outermost proxy** — the one that terminates the TLS connection from the browser. If you have Caddy in front of nginx, configure CORS in Caddy, not in nginx. If nginx is your only/outermost proxy, configure CORS there.
+
+You can verify your CORS setup with:
+
+```bash
+curl -I -X OPTIONS \
+  -H "Origin: https://outlook.datamate.org" \
+  -H "Access-Control-Request-Method: GET" \
+  -H "Access-Control-Request-Headers: Authorization" \
+  https://YOUR-SEAFILE-SERVER/api2/account/info/
+```
+
+The response must include `Access-Control-Allow-Origin: https://outlook.datamate.org` and return status `204`.
+
+#### nginx
+
+Add the following to your nginx `server` block (in the `location /` block). The `proxy_hide_header` line removes the default `Access-Control-Allow-Origin: *` that Seahub sets, preventing duplicate values:
 
 ```nginx
 # CORS for Seafile Outlook Add-in
+proxy_hide_header Access-Control-Allow-Origin;
 add_header Access-Control-Allow-Origin "https://outlook.datamate.org" always;
 add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
 add_header Access-Control-Allow-Headers "Authorization, Content-Type, X-SEAFILE-OTP" always;
 
-# Handle preflight requests
 if ($request_method = OPTIONS) {
     return 204;
 }
 ```
+
+#### Caddy (Caddyfile)
+
+```
+seafile.example.com {
+    header Access-Control-Allow-Origin "https://outlook.datamate.org"
+    header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, X-SEAFILE-OTP"
+
+    @options method OPTIONS
+    respond @options 204
+
+    reverse_proxy localhost:80 {
+        header_down -Access-Control-Allow-Origin
+    }
+}
+```
+
+#### Caddy Docker Proxy (lucaslorentz/caddy-docker-proxy)
+
+Add these labels to your Seafile service in `docker-compose.yml`:
+
+```yaml
+labels:
+  caddy: seafile.example.com
+  caddy.header.Access-Control-Allow-Origin: '"https://outlook.datamate.org"'
+  caddy.header.Access-Control-Allow-Methods: '"GET, POST, PUT, DELETE, OPTIONS"'
+  caddy.header.Access-Control-Allow-Headers: '"Authorization, Content-Type, X-SEAFILE-OTP"'
+  caddy.@options.method: OPTIONS
+  caddy.respond: "@options 204"
+  caddy.reverse_proxy: "{{upstreams 80}}"
+  caddy.reverse_proxy.header_down_1: -Access-Control-Allow-Origin
+```
+
+The `header_down_1` line removes the `Access-Control-Allow-Origin` header that Seahub sets by default (`*`), so only the correct value from Caddy's `header` directive remains. Without this, the browser receives two conflicting values and rejects the response.
 
 If you self-host the add-in on the same domain as Seafile, no CORS configuration is needed.
 

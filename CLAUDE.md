@@ -19,7 +19,7 @@ shared/                    # Shared modules (loaded via <script> tags in all HTM
   shared.css               # Shared styles + CSS custom properties (light/dark theme)
   file-icons.js            # SVG file type icons + status icons
   password.js              # Cryptographic password generator
-  utils.js                 # escapeHtml, formatSize, getHostLabel, showStatus, buildShareLinkHtml/Text
+  utils.js                 # escapeHtml, formatSize, getHostLabel, showStatus, buildShareLinkHtml/Text, applyOfficeTheme
   storage.js               # localStorage-based account config (replaces Thunderbird's browser.storage.local)
   i18n.js                  # Lightweight i18n (JSON locale files, data-i18n attributes)
 settings/                  # Account settings page (tabbed: Connection, Upload, Share Links, Save Attachments)
@@ -61,6 +61,11 @@ There is no linter, formatter, test suite, or CI pipeline.
 
 **Admin Center deployment**: Office Add-ins are deployed via **Microsoft 365 Admin Center** → **Settings** → **Integrated Apps** → **Upload custom apps** → **Office Add-in** → provide manifest URL. The old `aka.ms/olksideload` method no longer supports custom add-in uploads in new Outlook.
 
+**CORS**: The Seafile server must have CORS headers configured for the add-in origin (e.g., `https://outlook.datamate.org`). CORS must be set on the **outermost proxy** (the one terminating TLS). See README.md for nginx, Caddy, and Caddy Docker Proxy examples. Without CORS, authentication succeeds but all subsequent API calls fail. Key details:
+- Seahub sets `Access-Control-Allow-Origin: *` on regular API responses (GET, POST), but does **not** handle OPTIONS preflight requests (returns 403 with no CORS headers). Since any request with an `Authorization` header triggers a preflight, all authenticated API calls fail without proxy-level CORS config.
+- The proxy must: (1) intercept OPTIONS and respond with 204 + CORS headers, (2) set the correct `Access-Control-Allow-Origin`, and (3) strip Seahub's default `*` header to avoid duplicate values.
+- **SeaTable** (sister product) has Django CORS middleware built in and handles OPTIONS preflights correctly — no proxy CORS config needed there. This is a Seahub-specific limitation.
+
 **Icon format**: Microsoft requires **PNG** icons in the manifest (SVG is rejected). SVG sources are kept alongside PNGs in `assets/`.
 
 ## Code Conventions
@@ -90,7 +95,7 @@ There is no linter, formatter, test suite, or CI pipeline.
 - `--font-size-base` (13px), `--font-size-small` (12px), `--font-size-hint` (11px) — typography
 - `--radius`, `--focus-shadow`, `--select-arrow`, `--search-icon` — misc
 
-**Dark mode**: fully supported via `@media (prefers-color-scheme: dark)` in `shared.css`. All color variables are overridden for dark mode. Native form controls use `color-scheme: light dark`. When adding new colors, always define both light and dark variants.
+**Dark mode**: fully supported via `html[data-theme="dark"]` selector in `shared.css`. The theme is detected from `Office.context.officeTheme.bodyBackgroundColor` by the `applyOfficeTheme()` function in `shared/utils.js`, which is called in every page's `Office.onReady()`. Falls back to `prefers-color-scheme` when Office API is unavailable (e.g., dev server). When adding new colors, always define both light and dark variants.
 
 **SVG icons**: use `stroke="currentColor"` for theme-aware strokes. Fills use `fill-opacity` instead of solid fills to work on both light and dark backgrounds (e.g., folder icons use `fill="#e8a735" fill-opacity="0.15"`).
 

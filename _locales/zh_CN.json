@@ -81,6 +81,7 @@
   "errorQuotaExceeded": "存储配额已超出。请在 Seafile 服务器上释放空间或联系管理员。",
   "errorFileTooLarge": "文件太大，无法上传。",
   "errorNetworkError": "无法连接到 Seafile 服务器。请检查网络连接和服务器 URL。",
+  "errorCors": "Seafile 服务器不允许来自此加载项的请求。管理员需要在服务器上为加载项的来源配置 CORS 头。",
   "errorTooManyFiles": "此资料库中的文件数量超出服务器限制。",
   "generatePassword": "生成密码",
   "resetFileName": "重置为原始名称",

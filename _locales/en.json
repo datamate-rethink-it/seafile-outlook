@@ -81,6 +81,7 @@
   "errorQuotaExceeded": "Storage quota exceeded. Free up space on the Seafile server or contact your administrator.",
   "errorFileTooLarge": "The file is too large to upload.",
   "errorNetworkError": "Could not connect to Seafile server. Please check your network connection and server URL.",
+  "errorCors": "The Seafile server does not allow requests from this add-in. The administrator needs to configure CORS headers for the add-in's origin on the server.",
   "errorTooManyFiles": "The number of files in this library exceeds the server limit.",
   "generatePassword": "Generate password",
   "resetFileName": "Reset to original name",

@@ -81,6 +81,7 @@
   "errorQuotaExceeded": "Speicherkontingent überschritten. Bitte Speicherplatz auf dem Seafile-Server freigeben oder den Administrator kontaktieren.",
   "errorFileTooLarge": "Die Datei ist zu groß zum Hochladen.",
   "errorNetworkError": "Verbindung zum Seafile-Server fehlgeschlagen. Bitte Netzwerkverbindung und Server-URL prüfen.",
+  "errorCors": "Der Seafile-Server erlaubt keine Anfragen von diesem Add-in. Der Administrator muss CORS-Header für die Herkunft des Add-ins auf dem Server konfigurieren.",
   "errorTooManyFiles": "Die Anzahl der Dateien in dieser Bibliothek überschreitet das Serverlimit.",
   "generatePassword": "Passwort generieren",
   "resetFileName": "Auf Originalnamen zurücksetzen",

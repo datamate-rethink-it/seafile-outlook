@@ -81,6 +81,7 @@
   "errorQuotaExceeded": "Cota de armazenamento excedida. Libere espaço no servidor Seafile ou entre em contato com o administrador.",
   "errorFileTooLarge": "O arquivo é grande demais para ser enviado.",
   "errorNetworkError": "Não foi possível conectar ao servidor Seafile. Verifique sua conexão de rede e a URL do servidor.",
+  "errorCors": "O servidor Seafile não permite solicitações deste complemento. O administrador precisa configurar os cabeçalhos CORS para a origem do complemento no servidor.",
   "errorTooManyFiles": "O número de arquivos nesta biblioteca excede o limite do servidor.",
   "generatePassword": "Gerar senha",
   "resetFileName": "Redefinir para nome original",

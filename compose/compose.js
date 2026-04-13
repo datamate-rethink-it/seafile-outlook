@@ -536,6 +536,7 @@ async function insertShareLinkIntoBody(params) {
 
 // --- Initialize ---
 Office.onReady(async () => {
+  applyOfficeTheme();
   await I18N.init();
   I18N.applyToDocument();
 

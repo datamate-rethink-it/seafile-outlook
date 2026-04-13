@@ -55,6 +55,7 @@ let currentAccountId = null;
 let uploadCurrentPath = "/";
 let saveCurrentPath = "/";
 let ssoPollingInterval = null;
+let ssoDialog = null;
 
 // --- Tab Switching ---
 function switchTab(tabName) {
@@ -165,6 +166,9 @@ async function onConnected(newConfig) {
     config.contactEmail = info.contact_email || "";
   } catch (e) {
     console.error("Failed to fetch account info:", e);
+    if (e instanceof TypeError && e.message === "Failed to fetch") {
+      throw new Error(I18N.get("errorCors") || `The Seafile server does not allow requests from this add-in. The administrator needs to add CORS headers for ${location.origin} to the server configuration.`);
+    }
   }
 
   saveAccountConfig(currentAccountId, config);
@@ -267,8 +271,9 @@ ssoBtn.addEventListener("click", async () => {
     // Open SSO link via Office Dialog API
     Office.context.ui.displayDialogAsync(result.link, { height: 60, width: 40 }, (asyncResult) => {
       if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-        // Fallback: open in new window
         window.open(result.link, "_blank");
+      } else {
+        ssoDialog = asyncResult.value;
       }
     });
 
@@ -280,30 +285,40 @@ ssoBtn.addEventListener("click", async () => {
       if (elapsed > 300) {
         clearInterval(ssoPollingInterval);
         ssoPollingInterval = null;
+        if (ssoDialog) { try { ssoDialog.close(); } catch {} ssoDialog = null; }
         showStatus(ssoStatus, I18N.get("ssoTimeout") || "SSO login timed out.", "error");
         ssoBtn.disabled = false;
         return;
       }
       try {
         const status = await seafile.checkSSOStatus(serverUrl, match[1]);
-        if (status.status === "success" && (status.api_token || status.apiToken || status.api_key)) {
+        const token = status.api_token || status.apiToken || status.api_key;
+        if (token) {
           clearInterval(ssoPollingInterval);
           ssoPollingInterval = null;
+          if (ssoDialog) { try { ssoDialog.close(); } catch {} ssoDialog = null; }
           await onConnected({
             serverUrl,
-            username: status.username,
-            apiToken: status.api_token || status.apiToken || status.api_key,
+            username: status.username || status.email,
+            apiToken: token,
             authMethod: "sso",
           });
           ssoStatus.className = "status";
         } else if (status.status === "error") {
           clearInterval(ssoPollingInterval);
           ssoPollingInterval = null;
+          if (ssoDialog) { try { ssoDialog.close(); } catch {} ssoDialog = null; }
           showStatus(ssoStatus, I18N.get("ssoError") || "SSO login failed.", "error");
           ssoBtn.disabled = false;
         }
       } catch (e) {
-        console.error("SSO poll error:", e);
+        // If onConnected threw (e.g. CORS error), show the error and stop polling
+        if (!ssoPollingInterval) {
+          showStatus(ssoStatus, e.message, "error");
+          ssoBtn.disabled = false;
+        } else {
+          console.error("SSO poll error:", e);
+        }
       }
     }, 3000);
   } catch (e) {
@@ -358,42 +373,57 @@ ssoReconnectBtn.addEventListener("click", async () => {
     const match = result.link.match(/\/client-sso\/([^/?]+)/);
     if (!match) throw new Error("Failed to parse SSO token.");
 
+    let reconnectDialog = null;
     Office.context.ui.displayDialogAsync(result.link, { height: 60, width: 40 }, (asyncResult) => {
       if (asyncResult.status === Office.AsyncResultStatus.Failed) {
         window.open(result.link, "_blank");
+      } else {
+        reconnectDialog = asyncResult.value;
       }
     });
 
     showStatus(ssoReconnectPoll, I18N.get("ssoWaiting") || "Waiting for authentication in browser...", "info");
 
     let elapsed = 0;
+    let pollStopped = false;
     const pollInterval = setInterval(async () => {
       elapsed += 3;
       if (elapsed > 300) {
         clearInterval(pollInterval);
+        if (reconnectDialog) { try { reconnectDialog.close(); } catch {} reconnectDialog = null; }
         showStatus(ssoReconnectPoll, I18N.get("ssoTimeout") || "SSO login timed out.", "error");
         ssoReconnectBtn.disabled = false;
         return;
       }
       try {
         const status = await seafile.checkSSOStatus(serverUrl, match[1]);
-        if (status.status === "success" && (status.api_token || status.apiToken || status.api_key)) {
+        const token = status.api_token || status.apiToken || status.api_key;
+        if (token) {
           clearInterval(pollInterval);
+          pollStopped = true;
+          if (reconnectDialog) { try { reconnectDialog.close(); } catch {} reconnectDialog = null; }
           ssoReconnectPoll.className = "status";
           ssoReconnectEl.style.display = "none";
           await onConnected({
             serverUrl,
-            username: status.username,
-            apiToken: status.api_token || status.apiToken || status.api_key,
+            username: status.username || status.email,
+            apiToken: token,
             authMethod: "sso",
           });
         } else if (status.status === "error") {
           clearInterval(pollInterval);
+          pollStopped = true;
+          if (reconnectDialog) { try { reconnectDialog.close(); } catch {} reconnectDialog = null; }
           showStatus(ssoReconnectPoll, I18N.get("ssoError") || "SSO login failed.", "error");
           ssoReconnectBtn.disabled = false;
         }
       } catch (e) {
-        console.error("SSO reconnect poll error:", e);
+        if (pollStopped) {
+          showStatus(ssoReconnectPoll, e.message, "error");
+          ssoReconnectBtn.disabled = false;
+        } else {
+          console.error("SSO reconnect poll error:", e);
+        }
       }
     }, 3000);
   } catch (e) {
@@ -690,6 +720,7 @@ async function loadAccountUI() {
 
 // --- Initialize ---
 Office.onReady(async () => {
+  applyOfficeTheme();
   await I18N.init();
   I18N.applyToDocument();
 
