@@ -3,6 +3,7 @@ name: Validate
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -111,15 +112,12 @@ jobs:
 
       # --- Manifest Validation ---
 
-      - name: Validate manifest.xml
+      - name: Verify manifest file references exist
         run: |
           ERRORS=0
 
           # Check XML is well-formed
-          if ! xmllint --noout manifest.xml 2>/dev/null; then
-            echo "::error::manifest.xml is not well-formed XML"
-            ERRORS=$((ERRORS + 1))
-          fi
+          xmllint --noout manifest.xml
 
           # Check icon files exist
           for icon in assets/icon-16.png assets/icon-32.png assets/icon-80.png; do
@@ -137,14 +135,22 @@ jobs:
             fi
           done
 
+          # Check JS files referenced in HTML exist
+          for js in api/seafile.js shared/utils.js shared/storage.js shared/i18n.js shared/password.js shared/file-icons.js; do
+            if [ ! -f "$js" ]; then
+              echo "::error::JS file not found: $js"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
           if [ "$ERRORS" -gt 0 ]; then
             exit 1
           fi
-          echo "Manifest validation passed."
+          echo "All manifest file references exist."
 
       # --- Secrets Check ---
 
-      - name: Verify no secrets in repository
+      - name: Verify no secrets in package
         run: |
           ERRORS=0
           for pattern in .env .env.* credentials* *.key *.pem; do
