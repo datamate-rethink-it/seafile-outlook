@@ -44,7 +44,7 @@
   "sharePasswordHint": "Оставьте пустым для отсутствия пароля",
   "shareExpireDays": "Срок действия (дни)",
   "shareExpireDaysHint": "0 = без ограничения срока",
-  "showPasswordInEmail": "Показать пароль в письме (если задан)",
+  "showPasswordInEmail": "Показать пароль в письме",
   "skipLinkOptions": "Пропустить диалог (всегда применять эти значения)",
   "saveReplaceExisting": "Заменять существующие файлы с тем же именем",
   "insertSeafileLink": "Вставить ссылку Seafile",
@@ -91,5 +91,7 @@
   "emailPasswordProtected": "Защищено паролем (пароль будет отправлен отдельно)",
   "emailExpires": "Истекает:",
   "emailExpiresInDays": "Истекает через $1 дн.",
-  "emailLearnMore": "Узнать больше о"
+  "emailLearnMore": "Узнать больше о",
+  "passwordShareHint": "Если не отмечено, передайте пароль получателю отдельно.",
+  "resetToDefaults": "Сбросить"
 }

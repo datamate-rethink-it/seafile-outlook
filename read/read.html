@@ -35,8 +35,9 @@
       <select id="repoSelect"></select>
     </div>
     <label data-i18n="targetFolder">Target folder</label>
-    <div class="folder-picker" id="folderPicker">
-      <div class="current-path" id="currentPath"><span class="path-text">/</span><span class="toggle-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg></span></div>
+    <div class="folder-picker open" id="folderPicker">
+      <div class="current-path" id="currentPath"><span class="path-text">/</span><a id="resetDefaults" href="#" style="display:none;font-size:11px;margin-left:auto;" data-i18n="resetToDefaults">Reset to defaults</a></div>
+      <input type="text" id="folderFilter" class="folder-filter" style="display:none" data-i18n-placeholder="filterFiles" placeholder="Filter by name...">
       <ul class="folder-list" id="folderList" data-empty="No subfolders" data-i18n-empty="noSubfolders"></ul>
     </div>
 

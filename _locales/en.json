@@ -44,12 +44,12 @@
   "sharePasswordHint": "Leave empty for no password",
   "shareExpireDays": "Expiration (days)",
   "shareExpireDaysHint": "0 = no expiration",
-  "showPasswordInEmail": "Show password in email (if set)",
+  "showPasswordInEmail": "Show password in email",
   "skipLinkOptions": "Always use these defaults when inserting Seafile links (skip options dialog)",
   "saveReplaceExisting": "Replace existing files with the same name",
   "insertSeafileLink": "Insert Seafile Link",
   "emptyFolder": "Empty folder",
-  "filterFiles": "Filter files by name...",
+  "filterFiles": "Filter by name...",
   "noSubfolders": "No subfolders",
   "backToFiles": "Back",
   "existingLinkFound": "A share link already exists for this file.",
@@ -91,5 +91,7 @@
   "emailPasswordProtected": "Password protected (password will be sent separately)",
   "emailExpires": "Expires:",
   "emailExpiresInDays": "Expires in $1 days",
-  "emailLearnMore": "Learn more about"
+  "emailLearnMore": "Learn more about",
+  "passwordShareHint": "If unchecked, share the password separately with the recipient.",
+  "resetToDefaults": "Reset to defaults"
 }

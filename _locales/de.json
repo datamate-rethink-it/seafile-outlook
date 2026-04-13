@@ -44,12 +44,12 @@
   "sharePasswordHint": "Leer lassen für keinen Passwortschutz",
   "shareExpireDays": "Ablauf (Tage)",
   "shareExpireDaysHint": "0 = kein Ablaufdatum",
-  "showPasswordInEmail": "Passwort in E-Mail anzeigen (falls gesetzt)",
+  "showPasswordInEmail": "Passwort in E-Mail anzeigen",
   "skipLinkOptions": "Optionsdialog überspringen (immer diese Standardwerte verwenden)",
   "saveReplaceExisting": "Vorhandene Dateien mit gleichem Namen überschreiben",
   "insertSeafileLink": "Seafile-Link einfügen",
   "emptyFolder": "Leerer Ordner",
-  "filterFiles": "Dateien nach Name filtern...",
+  "filterFiles": "Nach Name filtern...",
   "noSubfolders": "Keine Unterordner",
   "backToFiles": "Zurück",
   "existingLinkFound": "Für diese Datei existiert bereits ein Freigabelink.",
@@ -91,5 +91,7 @@
   "emailPasswordProtected": "Passwortgeschützt (Passwort wird separat gesendet)",
   "emailExpires": "Ablauf:",
   "emailExpiresInDays": "Läuft ab in $1 Tagen",
-  "emailLearnMore": "Mehr erfahren über"
+  "emailLearnMore": "Mehr erfahren über",
+  "passwordShareHint": "Falls deaktiviert, muss das Passwort dem Empfänger separat mitgeteilt werden.",
+  "resetToDefaults": "Auf Standard zurücksetzen"
 }

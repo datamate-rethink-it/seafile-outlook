@@ -20,6 +20,8 @@ const saveStatus = document.getElementById("saveStatus");
 const accountSelectorEl = document.getElementById("accountSelector");
 const accountSelectEl = document.getElementById("accountSelect");
 const folderPicker = document.getElementById("folderPicker");
+const folderFilterInput = document.getElementById("folderFilter");
+const resetDefaultsEl = document.getElementById("resetDefaults");
 const openSettingsBtn = document.getElementById("openSettings");
 const setupBtn = document.getElementById("setupBtn");
 
@@ -76,30 +78,38 @@ async function loadAccountData() {
 }
 
 // --- Folder Picker ---
+const FOLDER_FILTER_THRESHOLD = 8;
+
 async function navigateToFolder(path) {
   currentPath = path;
   currentPathEl.querySelector(".path-text").textContent = path;
-  folderListEl.innerHTML = "";
+  folderFilterInput.value = "";
 
   try {
     const entries = await seafile.listDir(accountConfig.serverUrl, accountConfig.apiToken, currentRepoId, path);
     const dirs = entries.filter(e => e.type === "dir");
+    const fragment = document.createDocumentFragment();
 
     if (path !== "/") {
       const parentLi = document.createElement("li");
       const parentPath = path.substring(0, path.lastIndexOf("/")) || "/";
       parentLi.innerHTML = `<span class="folder-icon">${FILE_ICONS.folderUp}</span> ..`;
       parentLi.addEventListener("click", () => navigateToFolder(parentPath));
-      folderListEl.appendChild(parentLi);
+      fragment.appendChild(parentLi);
     }
 
     for (const dir of dirs) {
       const li = document.createElement("li");
+      li.dataset.name = dir.name.toLowerCase();
       const dirPath = path === "/" ? `/${dir.name}` : `${path}/${dir.name}`;
       li.innerHTML = `<span class="folder-icon">${FILE_ICONS.folder}</span> ${escapeHtml(dir.name)}`;
       li.addEventListener("click", () => navigateToFolder(dirPath));
-      folderListEl.appendChild(li);
+      fragment.appendChild(li);
     }
+
+    folderListEl.replaceChildren(fragment);
+    folderFilterInput.style.display = dirs.length > FOLDER_FILTER_THRESHOLD ? "block" : "none";
+    updateResetLink();
   } catch (e) {
     console.error("Failed to list directory:", e);
   }
@@ -110,15 +120,46 @@ repoSelectEl.addEventListener("change", () => {
   navigateToFolder("/");
 });
 
-currentPathEl.addEventListener("click", () => folderPicker.classList.toggle("open"));
-document.addEventListener("mousedown", (e) => {
-  if (!folderPicker.contains(e.target)) folderPicker.classList.remove("open");
+// --- Folder Filter ---
+folderFilterInput.addEventListener("input", () => {
+  const query = folderFilterInput.value.toLowerCase().trim();
+  for (const li of folderListEl.children) {
+    if (!li.dataset.name) { li.style.display = ""; continue; }
+    li.style.display = li.dataset.name.includes(query) ? "" : "none";
+  }
+});
+
+// --- Reset to Defaults ---
+function updateResetLink() {
+  const defaultRepoId = accountConfig.saveRepoId || accountConfig.repoId;
+  const defaultPath = accountConfig.savePath || "/";
+  const differs = currentRepoId !== defaultRepoId || currentPath !== defaultPath;
+  resetDefaultsEl.style.display = differs ? "inline" : "none";
+}
+
+resetDefaultsEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  const defaultRepoId = accountConfig.saveRepoId || accountConfig.repoId;
+  const defaultPath = accountConfig.savePath || "/";
+  if (defaultRepoId) {
+    repoSelectEl.value = defaultRepoId;
+    currentRepoId = defaultRepoId;
+  }
+  navigateToFolder(defaultPath);
 });
 
 // --- Attachment Rendering ---
+function fallbackFileName(att) {
+  const ext = att.contentType ? { "text/plain": ".txt", "text/html": ".html", "image/png": ".png", "image/jpeg": ".jpg", "application/pdf": ".pdf", "application/zip": ".zip" }[att.contentType] || "" : "";
+  return `attachment-${att.id.replace(/[^a-zA-Z0-9]/g, "-").substring(0, 20)}${ext}`;
+}
+
 function renderAttachments() {
   attachmentListEl.innerHTML = "";
   for (const att of attachments) {
+    if (!att.name || att.name.trim() === "") {
+      att.name = fallbackFileName(att);
+    }
     if (!att.customName) att.customName = att.name;
 
     const li = document.createElement("li");
@@ -210,6 +251,11 @@ saveBtn.addEventListener("click", async () => {
     statusEl.innerHTML = STATUS_ICONS.pending;
 
     try {
+      const fileName = (att.customName || att.name || "").trim();
+      if (!fileName || fileName === ".") {
+        throw new Error("Invalid filename");
+      }
+
       // Read attachment content via Office.js
       const content = await new Promise((resolve, reject) => {
         Office.context.mailbox.item.getAttachmentContentAsync(attId, (result) => {
@@ -234,7 +280,7 @@ saveBtn.addEventListener("click", async () => {
 
       // Upload
       const uploadLink = await seafile.getUploadLink(config.serverUrl, config.apiToken, repoId, targetDir);
-      await seafile.uploadFile(uploadLink, config.apiToken, blob, att.customName || att.name, targetDir, null, replace);
+      await seafile.uploadFile(uploadLink, config.apiToken, blob, fileName, targetDir, null, replace);
 
       statusEl.innerHTML = STATUS_ICONS.success;
       cb.disabled = true;

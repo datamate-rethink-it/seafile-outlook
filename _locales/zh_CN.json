@@ -44,7 +44,7 @@
   "sharePasswordHint": "留空表示不设密码",
   "shareExpireDays": "过期天数",
   "shareExpireDaysHint": "0 = 不过期",
-  "showPasswordInEmail": "在邮件中显示密码（如已设置）",
+  "showPasswordInEmail": "在邮件中显示密码",
   "skipLinkOptions": "跳过选项对话框（始终使用这些默认值）",
   "saveReplaceExisting": "覆盖同名文件",
   "insertSeafileLink": "插入 Seafile 链接",
@@ -91,5 +91,7 @@
   "emailPasswordProtected": "已设置密码保护（密码将另行发送）",
   "emailExpires": "过期：",
   "emailExpiresInDays": "将在 $1 天后过期",
-  "emailLearnMore": "了解更多关于"
+  "emailLearnMore": "了解更多关于",
+  "passwordShareHint": "如未勾选，请另行将密码告知收件人。",
+  "resetToDefaults": "重置为默认"
 }

@@ -369,6 +369,17 @@ h3 {
   transform: rotate(180deg);
 }
 
+.folder-picker .folder-filter {
+  width: 100%;
+  padding: 5px 8px 5px 28px;
+  font-size: var(--font-size-base);
+  border: none;
+  border-bottom: 1px solid var(--color-border-light);
+  border-radius: 0;
+  background: var(--color-bg-surface) var(--search-icon) no-repeat 8px center;
+  margin: 0;
+}
+
 .folder-picker .folder-list {
   list-style: none;
   padding: 0;

@@ -44,7 +44,7 @@
   "sharePasswordHint": "Dejar vacío para sin contraseña",
   "shareExpireDays": "Expiración (días)",
   "shareExpireDaysHint": "0 = sin expiración",
-  "showPasswordInEmail": "Mostrar contraseña en el correo (si se establece)",
+  "showPasswordInEmail": "Mostrar contraseña en el correo",
   "skipLinkOptions": "Omitir diálogo de opciones (usar siempre estos valores)",
   "saveReplaceExisting": "Reemplazar archivos existentes con el mismo nombre",
   "insertSeafileLink": "Insertar enlace de Seafile",
@@ -91,5 +91,7 @@
   "emailPasswordProtected": "Protegido con contraseña (la contraseña se enviará por separado)",
   "emailExpires": "Expira:",
   "emailExpiresInDays": "Expira en $1 días",
-  "emailLearnMore": "Más información sobre"
+  "emailLearnMore": "Más información sobre",
+  "passwordShareHint": "Si no se marca, comparta la contraseña por separado con el destinatario.",
+  "resetToDefaults": "Restablecer valores"
 }
