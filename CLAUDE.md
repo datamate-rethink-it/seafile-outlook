@@ -51,7 +51,7 @@ node server.js                # serves all files + proxies Seafile API calls
 # Dev manifest points to https://localhost:3000/
 ```
 
-There is no linter, formatter, test suite, or CI pipeline.
+There is no linter, formatter, or test suite. A GitHub Actions CI workflow (`.github/workflows/validate.yml`) validates JSON, i18n key consistency, manifest XML, and checks for secrets on every push.
 
 ## Deployment
 
@@ -110,7 +110,7 @@ There is no linter, formatter, test suite, or CI pipeline.
 - Translation files in `_locales/` as flat JSON (`{ "key": "value" }`)
 - HTML uses `data-i18n`, `data-i18n-placeholder`, `data-i18n-empty`, `data-i18n-title` attributes
 - `I18N.init()` detects locale from `Office.context.displayLanguage`, falls back to `navigator.language`, then English
-- 7 languages (95 keys each): English (primary), German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
+- 7 languages (96 keys each): English (primary), German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
 - When adding user-visible strings, add keys to all locale files
 
 ## SeafileAPI Class (api/seafile.js)

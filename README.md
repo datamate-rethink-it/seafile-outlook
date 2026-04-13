@@ -62,7 +62,7 @@ Built by [datamate](https://datamate.org), the Seafile partner for Europe.
 - **Encrypted library filtering** — encrypted libraries are excluded automatically
 - **Error handling** — clear messages for quota exceeded, file too large, too many files, and network errors
 - **Localization** — English, German, French, Spanish, Portuguese (BR), Russian, Chinese (Simplified)
-- **Dark mode** — automatically follows the system/Outlook theme preference
+- **Dark mode** — automatically follows the Outlook theme (detected via Office.js, not OS preference)
 - **Cross-platform** — works in Outlook on Windows, Mac, and Outlook Web (OWA)
 
 ## Requirements
