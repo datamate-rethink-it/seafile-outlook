@@ -80,5 +80,16 @@
   "composeInsertLabel": "Insérer un lien",
   "errorQuotaExceeded": "Quota de stockage dépassé. Libérez de l'espace sur le serveur Seafile ou contactez votre administrateur.",
   "errorFileTooLarge": "Le fichier est trop volumineux pour être envoyé.",
-  "errorNetworkError": "Connexion au serveur Seafile impossible. Vérifiez votre connexion réseau et l'URL du serveur."
+  "errorNetworkError": "Connexion au serveur Seafile impossible. Vérifiez votre connexion réseau et l'URL du serveur.",
+  "errorTooManyFiles": "Le nombre de fichiers dans cette bibliothèque dépasse la limite du serveur.",
+  "generatePassword": "Générer un mot de passe",
+  "resetFileName": "Réinitialiser le nom d'origine",
+  "emailLinkedFile": "J'ai lié un fichier à cet e-mail :",
+  "emailSize": "Taille :",
+  "emailLink": "Lien :",
+  "emailPassword": "Mot de passe :",
+  "emailPasswordProtected": "Protégé par mot de passe (le mot de passe sera envoyé séparément)",
+  "emailExpires": "Expire :",
+  "emailExpiresInDays": "Expire dans $1 jours",
+  "emailLearnMore": "En savoir plus sur"
 }

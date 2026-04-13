@@ -80,5 +80,16 @@
   "composeInsertLabel": "插入链接",
   "errorQuotaExceeded": "存储配额已超出。请在 Seafile 服务器上释放空间或联系管理员。",
   "errorFileTooLarge": "文件太大，无法上传。",
-  "errorNetworkError": "无法连接到 Seafile 服务器。请检查网络连接和服务器 URL。"
+  "errorNetworkError": "无法连接到 Seafile 服务器。请检查网络连接和服务器 URL。",
+  "errorTooManyFiles": "此资料库中的文件数量超出服务器限制。",
+  "generatePassword": "生成密码",
+  "resetFileName": "重置为原始名称",
+  "emailLinkedFile": "我已将一个文件链接到此邮件：",
+  "emailSize": "大小：",
+  "emailLink": "链接：",
+  "emailPassword": "密码：",
+  "emailPasswordProtected": "已设置密码保护（密码将另行发送）",
+  "emailExpires": "过期：",
+  "emailExpiresInDays": "将在 $1 天后过期",
+  "emailLearnMore": "了解更多关于"
 }

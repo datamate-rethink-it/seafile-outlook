@@ -80,5 +80,16 @@
   "composeInsertLabel": "Вставить ссылку",
   "errorQuotaExceeded": "Превышена квота хранилища. Освободите место на сервере Seafile или обратитесь к администратору.",
   "errorFileTooLarge": "Файл слишком большой для загрузки.",
-  "errorNetworkError": "Не удалось подключиться к серверу Seafile. Проверьте сетевое подключение и URL сервера."
+  "errorNetworkError": "Не удалось подключиться к серверу Seafile. Проверьте сетевое подключение и URL сервера.",
+  "errorTooManyFiles": "Количество файлов в этой библиотеке превышает лимит сервера.",
+  "generatePassword": "Сгенерировать пароль",
+  "resetFileName": "Сбросить к исходному имени",
+  "emailLinkedFile": "К этому письму прикреплён файл:",
+  "emailSize": "Размер:",
+  "emailLink": "Ссылка:",
+  "emailPassword": "Пароль:",
+  "emailPasswordProtected": "Защищено паролем (пароль будет отправлен отдельно)",
+  "emailExpires": "Истекает:",
+  "emailExpiresInDays": "Истекает через $1 дн.",
+  "emailLearnMore": "Узнать больше о"
 }

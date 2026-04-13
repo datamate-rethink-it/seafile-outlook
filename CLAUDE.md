@@ -111,7 +111,7 @@ The `proxyUrl()` helper routes calls through the dev proxy on localhost.
 ## Error Handling
 
 **`_extractErrorMessage(status, text, fallback)`** in `SeafileAPI` handles all API error responses consistently:
-- Known Seafile status codes: **443** = storage quota exceeded, **442** = file too large
+- Known Seafile status codes: **442** = file too large, **443** = storage quota exceeded, **447** = too many files in library
 - Parses server error messages from JSON responses (`error_msg`, `error`, `detail`)
 - Falls back to `"${fallback} (${status})"` if no server message is found
 - Unlike the Thunderbird version, does **not** use i18n in the API layer (no `browser.i18n` available) — uses English fallback strings instead

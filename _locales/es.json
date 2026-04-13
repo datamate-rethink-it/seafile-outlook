@@ -80,5 +80,16 @@
   "composeInsertLabel": "Insertar enlace",
   "errorQuotaExceeded": "Cuota de almacenamiento excedida. Libere espacio en el servidor Seafile o contacte a su administrador.",
   "errorFileTooLarge": "El archivo es demasiado grande para subirlo.",
-  "errorNetworkError": "No se pudo conectar al servidor Seafile. Verifique su conexión de red y la URL del servidor."
+  "errorNetworkError": "No se pudo conectar al servidor Seafile. Verifique su conexión de red y la URL del servidor.",
+  "errorTooManyFiles": "La cantidad de archivos en esta biblioteca supera el límite del servidor.",
+  "generatePassword": "Generar contraseña",
+  "resetFileName": "Restablecer nombre original",
+  "emailLinkedFile": "He vinculado un archivo a este correo:",
+  "emailSize": "Tamaño:",
+  "emailLink": "Enlace:",
+  "emailPassword": "Contraseña:",
+  "emailPasswordProtected": "Protegido con contraseña (la contraseña se enviará por separado)",
+  "emailExpires": "Expira:",
+  "emailExpiresInDays": "Expira en $1 días",
+  "emailLearnMore": "Más información sobre"
 }

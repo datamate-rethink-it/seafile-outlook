@@ -80,5 +80,16 @@
   "composeInsertLabel": "Link einfügen",
   "errorQuotaExceeded": "Speicherkontingent überschritten. Bitte Speicherplatz auf dem Seafile-Server freigeben oder den Administrator kontaktieren.",
   "errorFileTooLarge": "Die Datei ist zu groß zum Hochladen.",
-  "errorNetworkError": "Verbindung zum Seafile-Server fehlgeschlagen. Bitte Netzwerkverbindung und Server-URL prüfen."
+  "errorNetworkError": "Verbindung zum Seafile-Server fehlgeschlagen. Bitte Netzwerkverbindung und Server-URL prüfen.",
+  "errorTooManyFiles": "Die Anzahl der Dateien in dieser Bibliothek überschreitet das Serverlimit.",
+  "generatePassword": "Passwort generieren",
+  "resetFileName": "Auf Originalnamen zurücksetzen",
+  "emailLinkedFile": "Ich habe eine Datei mit dieser E-Mail verknüpft:",
+  "emailSize": "Größe:",
+  "emailLink": "Link:",
+  "emailPassword": "Passwort:",
+  "emailPasswordProtected": "Passwortgeschützt (Passwort wird separat gesendet)",
+  "emailExpires": "Ablauf:",
+  "emailExpiresInDays": "Läuft ab in $1 Tagen",
+  "emailLearnMore": "Mehr erfahren über"
 }
