@@ -13,9 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: sudo apt-get install -y libxml2-utils
-
       # --- Version Check (only on tags) ---
 
       - name: Verify version matches tag
@@ -120,7 +117,7 @@ jobs:
           ERRORS=0
 
           # Check XML is well-formed
-          xmllint --noout manifest.xml
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('manifest.xml')"
 
           # Check icon files exist
           for icon in assets/icon-16.png assets/icon-32.png assets/icon-80.png; do
