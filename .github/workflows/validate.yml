@@ -1,0 +1,160 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Version Check (only on tags) ---
+
+      - name: Verify version matches tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          MANIFEST=$(grep -oP '<Version>\K[^<]+' manifest.xml)
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "::error::Tag v$TAG does not match manifest.xml version $MANIFEST"
+            exit 1
+          fi
+          echo "Version check passed: $MANIFEST"
+
+      # --- JSON Validation ---
+
+      - name: Validate JSON files
+        run: |
+          ERRORS=0
+          for f in _locales/*.json; do
+            echo "Checking $f..."
+            if ! jq empty "$f" 2>/dev/null; then
+              echo "::error::Invalid JSON: $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "All JSON files valid."
+
+      # --- Empty Translations ---
+
+      - name: Check for empty translations
+        run: |
+          ERRORS=0
+          for f in _locales/*.json; do
+            EMPTY=$(jq -r 'to_entries[] | select(.value == "") | .key' "$f")
+            if [ -n "$EMPTY" ]; then
+              echo "::error::$f has empty translations: $(echo $EMPTY | tr '\n' ', ')"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "No empty translations found."
+
+      # --- i18n Key Consistency ---
+
+      - name: Check i18n key consistency
+        run: |
+          REFERENCE="_locales/en.json"
+          REF_KEYS=$(jq -r 'keys[]' "$REFERENCE" | sort)
+          ERRORS=0
+
+          # Check all locale files have the same keys as English
+          for f in _locales/*.json; do
+            [ "$f" = "$REFERENCE" ] && continue
+            LANG_KEYS=$(jq -r 'keys[]' "$f" | sort)
+
+            MISSING=$(comm -23 <(echo "$REF_KEYS") <(echo "$LANG_KEYS"))
+            EXTRA=$(comm -13 <(echo "$REF_KEYS") <(echo "$LANG_KEYS"))
+
+            if [ -n "$MISSING" ]; then
+              echo "::error::$f is missing keys: $(echo $MISSING | tr '\n' ', ')"
+              ERRORS=$((ERRORS + 1))
+            fi
+            if [ -n "$EXTRA" ]; then
+              echo "::warning::$f has extra keys: $(echo $EXTRA | tr '\n' ', ')"
+            fi
+          done
+
+          # Collect all i18n keys used in code
+          JS_KEYS=$(grep -rohP 'I18N\.get\(\s*"\K[^"]+' settings/*.js compose/*.js read/*.js shared/*.js 2>/dev/null | sort -u)
+          HTML_KEYS=$(grep -rohP 'data-i18n(?:-placeholder|-title|-empty)?="\K[^"]+' settings/*.html compose/*.html read/*.html 2>/dev/null | sort -u)
+          CODE_KEYS=$(echo -e "${JS_KEYS}\n${HTML_KEYS}" | sort -u)
+
+          # Check for keys used in code but missing from en.json
+          MISSING_FROM_LOCALE=$(comm -23 <(echo "$CODE_KEYS") <(echo "$REF_KEYS"))
+          if [ -n "$MISSING_FROM_LOCALE" ]; then
+            echo "::error::Keys used in code but missing from locale files: $(echo $MISSING_FROM_LOCALE | tr '\n' ', ')"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          # Check for keys in en.json but unused in code
+          UNUSED=$(comm -13 <(echo "$CODE_KEYS") <(echo "$REF_KEYS"))
+          if [ -n "$UNUSED" ]; then
+            echo "::warning::Keys in locale files but unused in code: $(echo $UNUSED | tr '\n' ', ')"
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "All locale files have consistent keys."
+
+      # --- Manifest Validation ---
+
+      - name: Validate manifest.xml
+        run: |
+          ERRORS=0
+
+          # Check XML is well-formed
+          if ! xmllint --noout manifest.xml 2>/dev/null; then
+            echo "::error::manifest.xml is not well-formed XML"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          # Check icon files exist
+          for icon in assets/icon-16.png assets/icon-32.png assets/icon-80.png; do
+            if [ ! -f "$icon" ]; then
+              echo "::error::Icon not found: $icon"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          # Check HTML files referenced in manifest exist
+          for html in settings/settings.html compose/compose.html read/read.html; do
+            if [ ! -f "$html" ]; then
+              echo "::error::HTML file not found: $html"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "Manifest validation passed."
+
+      # --- Secrets Check ---
+
+      - name: Verify no secrets in repository
+        run: |
+          ERRORS=0
+          for pattern in .env .env.* credentials* *.key *.pem; do
+            for f in $(find api/ shared/ settings/ compose/ read/ assets/ _locales/ -name "$pattern" 2>/dev/null); do
+              echo "::error::Potential secret file found: $f"
+              ERRORS=$((ERRORS + 1))
+            done
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "No secrets detected."
